@@ -1,13 +1,33 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
-class Game(models.Model):
+class BaseModel(models.Model):
     id = models.AutoField(primary_key=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        User,
+        related_name="%(app_label)s_%(class)s_created_by",
+        related_query_name="%(app_label)s_%(class)s_created_by",
+        on_delete=models.DO_NOTHING,
+    )
+    modified_by = models.ForeignKey(
+        User,
+        related_name="%(app_label)s_%(class)s_modified_by",
+        related_query_name="%(app_label)s_%(class)s_modified_by",
+        on_delete=models.DO_NOTHING,
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Game(BaseModel):
     name = models.CharField(max_length=100, null=False)
 
 
-class Player(models.Model):
-    id = models.AutoField(primary_key=True)
+class Player(BaseModel):
     username = models.CharField(max_length=50, null=False)
     rank = models.PositiveIntegerField()
     total_scores = models.IntegerField()
@@ -19,27 +39,27 @@ class Player(models.Model):
     drawn = models.PositiveIntegerField()
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
 
+    class Meta:
+        unique_together = ["game", "username"]
 
-class MatchRow(models.Model):
-    id = models.AutoField(primary_key=True)
+
+class MatchRow(BaseModel):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
     score = models.IntegerField()
 
 
-class Match(models.Model):
+class Match(BaseModel):
     STATUS_CHOICE = (
         ("P", "In Play"),
         ("E", "End")
     )
-    id = models.AutoField(primary_key=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
     play = models.ManyToManyField(MatchRow)
     status = models.CharField(max_length=2, choices=STATUS_CHOICE)
     players = models.ManyToManyField(Player)
 
 
-class PlayerMatchResult(models.Model):
-    id = models.AutoField(primary_key=False)
+class PlayerMatchResult(BaseModel):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
     score = models.IntegerField()
     points = models.FloatField()
