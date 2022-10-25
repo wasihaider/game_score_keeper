@@ -1,10 +1,14 @@
+import logging
+
 from .models import Game, Player, Match, MatchRow, PlayerMatchResult
 from .serializers import (GameSerializer, MatchRowSerializer, PlayerMatchResultSerializer, MatchListSerializer,
-                          MatchStartSerializer, PlayerSerializer, MatchDetailSerializer)
-from rest_framework import generics
+                          MatchStartSerializer, PlayerSerializer, MatchDetailSerializer, GamePlayerSerializer)
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+
+logger = logging.getLogger(__name__)
 
 
 class GameListView(generics.ListCreateAPIView):
@@ -17,32 +21,23 @@ class GameDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GameSerializer
 
 
-class GamePlayersView(APIView):
-    serializer_class = GameSerializer
+class GamePlayersListView(generics.ListCreateAPIView):
+    serializer_class = GamePlayerSerializer
+    queryset = Player.objects.all()
 
     def get_queryset(self, *args, **kwargs):
-        return Game.objects.all()
+        game_id = self.kwargs["game_id"]
+        return self.queryset.filter(game__id=game_id)
 
-    def get_object(self, id):
-        return get_object_or_404(self.get_queryset(), id=id)
-
-    def get(self, request, pk=None, format=None, **kwargs):
-        game = self.get_object(pk)
-        serializer = GameSerializer(game)
-        players = Player.objects.filter(game=game)
-        players_serializer = PlayerSerializer(players, many=True)
-
-        data = serializer.data
-        data['players'] = players_serializer.data
-
-        return Response(data)
+    def create(self, request, *args, **kwargs):
+        request.data["game"] = kwargs["game_id"]
+        return super(GamePlayersListView, self).create(request, args, kwargs)
 
 
-class PlayerCreateView(generics.ListCreateAPIView):
+class GamePlayerDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PlayerSerializer
     queryset = Player.objects.all()
 
-
-class PlayerDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
+    def get_queryset(self, *args, **kwargs):
+        game_id = self.kwargs['game_id']
+        return self.queryset.filter(game__id=game_id)

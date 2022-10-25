@@ -10,6 +10,17 @@ services:
       - POSTGRES_DB=gsk
       - POSTGRES_USER=gsk
       - POSTGRES_PASSWORD=gskpostgres
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: gsk_db_admin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: wsi.haidr@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - /var/lib/pgadmin
   api:
     container_name: "gsk_django"
     build:
@@ -17,7 +28,7 @@ services:
       dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./scorekeeper:/app
     ports:
       - "8000:8000"
     depends_on:

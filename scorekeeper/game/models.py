@@ -6,18 +6,6 @@ class BaseModel(models.Model):
     id = models.AutoField(primary_key=True)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(
-        User,
-        related_name="%(app_label)s_%(class)s_created_by",
-        related_query_name="%(app_label)s_%(class)s_created_by",
-        on_delete=models.DO_NOTHING,
-    )
-    modified_by = models.ForeignKey(
-        User,
-        related_name="%(app_label)s_%(class)s_modified_by",
-        related_query_name="%(app_label)s_%(class)s_modified_by",
-        on_delete=models.DO_NOTHING,
-    )
 
     class Meta:
         abstract = True
@@ -29,15 +17,19 @@ class Game(BaseModel):
 
 class Player(BaseModel):
     username = models.CharField(max_length=50, null=False)
-    rank = models.PositiveIntegerField()
-    total_scores = models.IntegerField()
-    scores_average = models.FloatField()
-    points = models.FloatField()
-    total_matches = models.PositiveIntegerField()
-    win = models.PositiveIntegerField()
-    lose = models.PositiveIntegerField()
-    drawn = models.PositiveIntegerField()
+    full_name = models.CharField(max_length=250, default="")
+    total_scores = models.IntegerField(default=0)
+    scores_average = models.FloatField(default=0)
+    points = models.FloatField(default=0)
+    total_matches = models.PositiveIntegerField(default=0)
+    win = models.PositiveIntegerField(default=0)
+    lose = models.PositiveIntegerField(default=0)
+    drawn = models.PositiveIntegerField(default=0)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
+
+    def rank(self):
+        count = Player.objects.filter(points__lt=self.points).count()
+        return count + 1
 
     class Meta:
         unique_together = ["game", "username"]
