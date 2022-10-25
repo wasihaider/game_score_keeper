@@ -42,8 +42,9 @@ class MatchRow(BaseModel):
 
 class Match(BaseModel):
     STATUS_CHOICE = (
+        ("C", "Created"),
         ("P", "In Play"),
-        ("E", "End")
+        ("E", "Ended")
     )
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
     play = models.ManyToManyField(MatchRow)
