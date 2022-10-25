@@ -35,11 +35,6 @@ class Player(BaseModel):
         unique_together = ["game", "username"]
 
 
-class MatchRow(BaseModel):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
-    score = models.IntegerField()
-
-
 class Match(BaseModel):
     STATUS_CHOICE = (
         ("C", "Created"),
@@ -47,13 +42,18 @@ class Match(BaseModel):
         ("E", "Ended")
     )
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
-    play = models.ManyToManyField(MatchRow)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICE)
-    players = models.ManyToManyField(Player)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICE, default="C")
 
 
-class PlayerMatchResult(BaseModel):
+class MatchRow(BaseModel):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
+    score = models.IntegerField()
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
+
+
+class PlayerMatch(BaseModel):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
     score = models.IntegerField()
     points = models.FloatField()
     position = models.PositiveIntegerField()
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)

@@ -1,6 +1,6 @@
 import logging
 
-from .models import Game, Player, Match, MatchRow, PlayerMatchResult
+from .models import Game, Player, Match, MatchRow, PlayerMatch
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer)
 from rest_framework import generics, status
 from rest_framework.views import APIView
@@ -51,4 +51,12 @@ class GameMatchListView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         request.data["game"] = kwargs["game_id"]
-        return super(GameMatchListSerializer, self).create(request, args, kwargs)
+        return super(GameMatchListView, self).create(request, args, kwargs)
+
+
+class GameMatchDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = GameMatchSerializer
+    queryset = Match.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(game__id=self.kwargs["game_id"])

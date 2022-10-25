@@ -1,4 +1,4 @@
-from .models import Game, Player, Match, MatchRow, PlayerMatchResult
+from .models import Game, Player, Match, MatchRow, PlayerMatch
 from rest_framework import serializers
 
 
@@ -28,5 +28,5 @@ class PlayerSerializer(serializers.ModelSerializer):
 class GameMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ("id", "created_on", "modified_on", "game", "status")
+        fields = "__all__"
         read_only_fields = ("id", "created_on", "modified_on")
