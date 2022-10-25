@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class BaseModel(models.Model):
@@ -46,9 +45,13 @@ class Match(BaseModel):
 
 
 class MatchRow(BaseModel):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
+
+
+class MatchRowIndividualScore(BaseModel):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
     score = models.IntegerField()
-    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
+    row = models.ForeignKey(MatchRow, related_name="scores", on_delete=models.CASCADE, null=False)
 
 
 class PlayerMatch(BaseModel):
