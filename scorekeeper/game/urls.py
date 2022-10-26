@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (GameListView, GameDetailView, GamePlayersListView, GamePlayerDetailView, GameMatchListView,
-                    GameMatchDetailView, GameMatchCreateView, MatchRowDetailView, MatchRowListView)
+                    GameMatchDetailView, GameMatchCreateView, MatchRowDetailView, MatchRowListView, MatchResultView,
+                    MatchEndView)
 
 urlpatterns = [
     path("", GameListView.as_view(), name="game-list"),
@@ -12,4 +13,6 @@ urlpatterns = [
     path("match/<int:pk>", GameMatchDetailView.as_view(), name="game-match-detail"),
     path("match/<int:match_id>/rows", MatchRowListView.as_view(), name="match-row-list"),
     path("match/<int:match_id>/row/<int:pk>", MatchRowDetailView.as_view(), name="match-row-detail"),
+    path("match/<int:match_id>/end/", MatchEndView.as_view(), name="end-match"),
+    path("match/<int:match_id>/result", MatchResultView.as_view(), name="match-result"),
 ]

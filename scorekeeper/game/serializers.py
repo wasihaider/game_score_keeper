@@ -19,10 +19,16 @@ class GamePlayerSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     rank = serializers.IntegerField()
 
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            instance.__setattr__(key, value)
+        instance.score_average = instance.total_scores / instance.total_matches
+        instance.points_average = instance.points / instance.total_matches
+
     class Meta:
         model = Player
         fields = "__all__"
-        read_only_fields = ("id", "created_on", "modified_on")
+        read_only_fields = ("id", "created_on", "modified_on", "score_average", "points_average")
 
 
 class GameMatchSerializer(serializers.ModelSerializer):

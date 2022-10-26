@@ -20,14 +20,13 @@ class Player(BaseModel):
     total_scores = models.IntegerField(default=0)
     scores_average = models.FloatField(default=0)
     points = models.FloatField(default=0)
+    points_average = models.FloatField(default=0)
     total_matches = models.PositiveIntegerField(default=0)
     win = models.PositiveIntegerField(default=0)
-    lose = models.PositiveIntegerField(default=0)
-    drawn = models.PositiveIntegerField(default=0)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
 
     def rank(self):
-        count = Player.objects.filter(points__lt=self.points).count()
+        count = Player.objects.filter(points_average__lt=self.points_average).count()
         return count + 1
 
     class Meta:

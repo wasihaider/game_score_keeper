@@ -1,6 +1,6 @@
 import logging
 
-from utils import calculate_points
+from .utils import calculate_points
 from .models import Game, Player, Match, MatchRow, PlayerMatch
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
                           MatchRowSerializer, MatchPlayerSerializer)
@@ -86,27 +86,61 @@ class MatchRowDetailView(generics.RetrieveUpdateDestroyAPIView):
         return self.queryset.filter(match__id=self.kwargs["match_id"])
 
 
-class MatchResultsView(APIView):
-    def post(self, request, format=None):
-        match_id = self.kwargs["match_id"]
-        match = get_object_or_404(Match, id=match_id)
-        match_serializer = GameMatchSerializer(match)
+class MatchEndView(APIView):
+    def post(self, request, match_id, format=None):
 
-        players_scores = MatchRow.objects.values("scores__player").\
-            annotate(player_score=Sum("scores__score")).\
+        players_scores = MatchRow.objects. \
+            filter(match__id=match_id). \
+            values("scores__player"). \
+            annotate(player_score=Sum("scores__score")). \
             order_by("-player_score")
 
         position = 1
         results = []
         for score in players_scores:
-            results.append({
+            result = {
                 'player': score['scores__player'],
                 'score': score['player_score'],
                 'position': position,
                 'points': calculate_points(score['player_score'],
-                                           position, len(players_scores), players_scores[0]['player_score'])
-            })
+                                           position, len(players_scores), players_scores[0]['player_score']),
+                'match': match_id
+            }
             position += 1
+            serializer = MatchPlayerSerializer(data=result)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        serializer = MatchPlayerSerializer(results, many=True)
-        serializer.save()
+        # Update player records
+        for result in results:
+            player = Player.objects.get(id=result['player'])
+            data = {
+                "total_matches": player.total_matches + 1,
+                "total_scores": player.total_scores + result['score'],
+                "points": player.points + result['points'],
+                "win": player.win + 1 if result['position'] == 1 else player.win
+            }
+            serializer = PlayerSerializer(player, data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+        # End match
+        match = get_object_or_404(Match, id=match_id)
+        data = {"status": "E"}
+        match_serializer = GameMatchSerializer(match, data=data)
+        match_serializer.is_valid()
+        match_serializer.save()
+
+        # get match results
+        match_result = PlayerMatch.objects.filter(match__id=match_id)
+        result_serializer = MatchPlayerSerializer(match_result, many=True)
+        return Response({"match": match_serializer.data, "result": result_serializer.data}, status=status.HTTP_200_OK)
+
+
+class MatchResultView(APIView):
+    def get(self, request, match_id, format=None):
+        match = Match.objects.get(id=match_id)
+        match_serializer = GameMatchSerializer(match)
+        results = PlayerMatch.objects.filter(match=match)
+        results_serializer = MatchPlayerSerializer(results, many=True)
+        return Response({"match": match_serializer.data, "result": results_serializer.data}, status=status.HTTP_200_OK)
