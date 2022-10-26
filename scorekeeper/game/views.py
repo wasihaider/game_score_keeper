@@ -3,12 +3,15 @@ import logging
 from .utils import calculate_points
 from .models import Game, Player, Match, MatchRow, PlayerMatch
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
-                          MatchRowSerializer, MatchPlayerSerializer)
+                          MatchRowSerializer, MatchPlayerSerializer, GameStatSerializer)
+from .filters import GameStatsFilterSet
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from django.db.models import Sum
+from django.db.models import Sum, Avg
+from django_filters import rest_framework as drf_filters
+from rest_framework import filters
 
 logger = logging.getLogger(__name__)
 
@@ -127,8 +130,8 @@ class MatchEndView(APIView):
         # End match
         match = get_object_or_404(Match, id=match_id)
         data = {"status": "E"}
-        match_serializer = GameMatchSerializer(match, data=data)
-        match_serializer.is_valid()
+        match_serializer = GameMatchSerializer(match, data=data, partial=True)
+        match_serializer.is_valid(raise_exception=True)
         match_serializer.save()
 
         # get match results
@@ -144,3 +147,18 @@ class MatchResultView(APIView):
         results = PlayerMatch.objects.filter(match=match)
         results_serializer = MatchPlayerSerializer(results, many=True)
         return Response({"match": match_serializer.data, "result": results_serializer.data}, status=status.HTTP_200_OK)
+
+
+class GameStatsView(generics.ListAPIView):
+    serializer_class = GameStatSerializer
+    queryset = PlayerMatch.objects.all()
+    filter_backends = [drf_filters.DjangoFilterBackend, filters.OrderingFilter]
+    filter_class = GameStatsFilterSet
+    ordering_fields = "__all__"
+
+    def get_queryset(self):
+        return self.queryset.filter(match__game__id=self.kwargs["game_id"])\
+            .annotate(scores_total=Sum('score'), points_total=Sum('points'),
+                      scores_average=Avg('score'), points_average=Avg('points'))
+
+

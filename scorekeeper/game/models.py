@@ -15,8 +15,7 @@ class Game(BaseModel):
 
 
 class Player(BaseModel):
-    username = models.CharField(max_length=50, null=False)
-    full_name = models.CharField(max_length=250, default="")
+    name = models.CharField(max_length=250, null=False)
     total_scores = models.IntegerField(default=0)
     scores_average = models.FloatField(default=0)
     points = models.FloatField(default=0)
@@ -30,7 +29,7 @@ class Player(BaseModel):
         return count + 1
 
     class Meta:
-        unique_together = ["game", "username"]
+        unique_together = ["game", "name"]
 
 
 class Match(BaseModel):

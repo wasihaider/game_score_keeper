@@ -12,7 +12,7 @@ class GameSerializer(serializers.ModelSerializer):
 class GamePlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ("id", "username", "full_name", "created_on", "modified_on", "game")
+        fields = ("id", "name", "created_on", "modified_on", "game")
         read_only_fields = ("id", "created_on", "modified_on")
 
 
@@ -39,10 +39,24 @@ class GameMatchSerializer(serializers.ModelSerializer):
 
 
 class MatchPlayerSerializer(serializers.ModelSerializer):
+    player_name = serializers.CharField(source="player.name", read_only=True)
+
     class Meta:
         model = PlayerMatch
         fields = "__all__"
-        read_only_fields = ("id", "created_on", "modified_on")
+        read_only_fields = ("id", "created_on", "modified_on", "player_name")
+
+
+class GameStatSerializer(serializers.ModelSerializer):
+    player_name = serializers.CharField(source="player.name", read_only=True)
+    scores_total = serializers.IntegerField(read_only=True)
+    points_total = serializers.FloatField(read_only=True)
+    scores_average = serializers.FloatField(read_only=True)
+    points_average = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = PlayerMatch
+        fields = ("player_name", "scores_total", "points_total", "scores_average", "points_average")
 
 
 class MatchRowIndividualScoreSerializer(serializers.ModelSerializer):
