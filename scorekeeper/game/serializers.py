@@ -22,8 +22,10 @@ class PlayerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         for key, value in validated_data.items():
             instance.__setattr__(key, value)
-        instance.score_average = instance.total_scores / instance.total_matches
+        instance.scores_average = instance.total_scores / instance.total_matches
         instance.points_average = instance.points / instance.total_matches
+        instance.save()
+        return instance
 
     class Meta:
         model = Player

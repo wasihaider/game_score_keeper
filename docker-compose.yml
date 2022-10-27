@@ -33,3 +33,15 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  frontend:
+    container_name: "gsk_frontend"
+    restart: always
+    command: npm start
+    build:
+      context: ./gsk_frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    depends_on:
+      - api

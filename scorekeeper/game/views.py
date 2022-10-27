@@ -109,6 +109,7 @@ class MatchEndView(APIView):
                                            position, len(players_scores), players_scores[0]['player_score']),
                 'match': match_id
             }
+            results.append(result)
             position += 1
             serializer = MatchPlayerSerializer(data=result)
             serializer.is_valid(raise_exception=True)
@@ -116,14 +117,14 @@ class MatchEndView(APIView):
 
         # Update player records
         for result in results:
-            player = Player.objects.get(id=result['player'])
+            player = get_object_or_404(Player, id=result['player'])
             data = {
                 "total_matches": player.total_matches + 1,
                 "total_scores": player.total_scores + result['score'],
                 "points": player.points + result['points'],
                 "win": player.win + 1 if result['position'] == 1 else player.win
             }
-            serializer = PlayerSerializer(player, data=data)
+            serializer = PlayerSerializer(player, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
@@ -160,5 +161,3 @@ class GameStatsView(generics.ListAPIView):
         return self.queryset.filter(match__game__id=self.kwargs["game_id"])\
             .annotate(scores_total=Sum('score'), points_total=Sum('points'),
                       scores_average=Avg('score'), points_average=Avg('points'))
-
-
