@@ -40,6 +40,8 @@ services:
     build:
       context: ./gsk_frontend/
       dockerfile: Dockerfile
+    volumes:
+      - ./gsk_frontend/:/app/frontend
     ports:
       - "3000:3000"
     stdin_open: true
