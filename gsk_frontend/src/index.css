@@ -14,5 +14,36 @@ code {
 
 .center-container {
   display: flex !important;
-  align-items: center !important;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  overflow: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.center-grid-container {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  margin: auto !important;
+}
+
+.left-grid-container {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin: auto !important;
+}
+
+.no-padding-grid-item {
+  padding: 0 !important;
+}
+
+.dark-bg-drawer {
+  background-color: #00030e !important;
+}
+
+.list-items {
+
 }

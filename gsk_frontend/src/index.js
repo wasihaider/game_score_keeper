@@ -13,13 +13,11 @@ const theme = createTheme({
     palette: {
         type: 'dark',
         primary: {
-            main: '#7b1fa2'
+            main: '#0c1039',
+            light: '#131b5a',
         },
         secondary: {
-            main: '#9575cd'
-        },
-        background: {
-            default: '#00030e',
+            main: '#323554',
         },
         error: {
             main: '#ff1744',
@@ -28,11 +26,16 @@ const theme = createTheme({
             main: '#546e7a',
         },
         text: {
-            primary: "#ffffff",
-            secondary: 'rgba(255, 255, 255, 0.7)'
-        }
+            // primary: '#ffffff',
+            // secondary: 'rgba(255,255,255,0.7)',
+            primary: '#bdbdbd',
+            secondary: 'rgba(189,189,189,0.7)',
+        },
+        background: {
+            default: '#00000A',
+        },
+        divider: '#bdbdbd',
     },
-    spacing: 8,
     shape: {
         borderRadius: 4,
     },
@@ -41,14 +44,15 @@ const theme = createTheme({
             arrow: true,
         },
     },
+    spacing: 8,
 });
 
 root.render(
     <React.StrictMode>
         <BrowserRouter>
             <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <App />
+                <CssBaseline/>
+                <App/>
             </ThemeProvider>
         </BrowserRouter>
     </React.StrictMode>
