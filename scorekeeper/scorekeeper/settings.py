@@ -28,7 +28,8 @@ SECRET_KEY = "django-insecure-jz%6=6m^%nmjue)6+*zp6^(c+bz6*3u&=f$d^et(!j)za^yw^c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS=['*']
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "game",
     "django_filters",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "scorekeeper.urls"

@@ -1,4 +1,7 @@
 from django.db import models
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class BaseModel(models.Model):
@@ -12,6 +15,15 @@ class BaseModel(models.Model):
 
 class Game(BaseModel):
     name = models.CharField(max_length=100, null=False)
+    color = models.CharField(max_length=7, null=False)
+    avatar = models.CharField(max_length=3, null=False)
+
+    def save(self, *args, **kwargs):
+        self.avatar = ''
+        for s in self.name.split()[:3]:
+            self.avatar += s[0].upper()
+        logger.debug(self.avatar)
+        super(Game, self).save(*args, **kwargs)
 
 
 class Player(BaseModel):
