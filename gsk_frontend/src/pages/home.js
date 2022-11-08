@@ -2,12 +2,13 @@ import * as React from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom'
 import {Grid, Container} from '@mui/material';
-import {AddRounded} from '@mui/icons-material'
+import {AddRounded, Poll, Scoreboard} from '@mui/icons-material'
 import ClickableAvatar from "../components/ClickableAvatar";
 import {useEffect, useState} from "react";
 import {BASE_API_URL, GAME_ENDPOINT} from "../constants";
 import CustomAppBar from "../components/CustomAppBar";
 import GameFormDialogue from '../components/GameFormDialogue'
+import {randomColor} from "../utils";
 
 
 export default function Home() {
@@ -21,17 +22,9 @@ export default function Home() {
     const handleCancel = () => setOpenDialogue(false);
     const handleGameInput = (e) => setGameName(e.target.value)
 
-    const randomColor = () => {
-        let hex = Math.floor(Math.random() * 0xFFFFFF);
-        let color = "#" + hex.toString(16);
-
-        return color;
-    }
-
     const beginGameHandler = e => {
-        const data_id = e.target.getAttribute('dataid')
-        console.log('In begin game handler')
-        navigate("game")
+        const data_id = e.target.attributes.dataid.value
+        navigate(`game/${data_id}`)
     }
 
     const handlerAddGame = () => {
@@ -67,7 +60,8 @@ export default function Home() {
                         }}/>
                     </Grid>
                     <GameFormDialogue handle_open={handleClickOpen} handle_cancel={handleCancel} state={openDialogue}
-                                      handle_game={handleGameInput} handle_add={handlerAddGame}/>
+                                      handle_game={handleGameInput} handle_add={handlerAddGame}
+                                      title='Add new game'/>
                     {
                         games.map(game => {
                             return (

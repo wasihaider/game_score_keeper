@@ -12,7 +12,7 @@ class GameSerializer(serializers.ModelSerializer):
 class GamePlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ("id", "name", "created_on", "modified_on", "game")
+        fields = ("id", "name", "created_on", "modified_on", "game", "color")
         read_only_fields = ("id", "created_on", "modified_on")
 
 

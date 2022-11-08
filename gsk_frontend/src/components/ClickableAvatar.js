@@ -2,12 +2,13 @@ import React from 'react';
 import {Avatar, Grid, IconButton} from "@mui/material";
 
 export default function ClickableAvatar(props) {
+    const {isPlayer, click_handler, data_id, sx, avatar, name} = props
     return (
         <Grid container direction='column' style={{display: 'flex', alignItems: 'center'}}>
-            <IconButton onClick={props.click_handler} dataid={props.data_id}>
-                <Avatar variant="rounded" sx={props.sx} dataid={props.data_id}>{props.avatar}</Avatar>
+            <IconButton onClick={click_handler} dataid={data_id}>
+                <Avatar variant={isPlayer ? "circular": "rounded"} sx={sx} dataid={data_id}>{avatar}</Avatar>
             </IconButton>
-            <span>{props.name}</span>
+            <span>{name}</span>
         </Grid>
     )
 }

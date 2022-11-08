@@ -15,11 +15,11 @@ const StyledDialog = styled(Dialog)(({theme}) => ({
 }))
 
 export default function FormDialog(props) {
-    const {state, handle_game, handle_cancel, handle_add} = props
+    const {state, handle_game, handle_cancel, handle_add, title} = props
     return (
         <div>
             <StyledDialog open={state} onClose={handle_cancel}>
-                <DialogTitle>Add a new game</DialogTitle>
+                <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
                     <TextField
                         focused={true}

@@ -35,6 +35,7 @@ class Player(BaseModel):
     total_matches = models.PositiveIntegerField(default=0)
     win = models.PositiveIntegerField(default=0)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
+    color = models.CharField(max_length=7, null=False)
 
     def rank(self):
         count = Player.objects.filter(points_average__lt=self.points_average).count()
