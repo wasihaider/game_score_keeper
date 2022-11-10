@@ -4,7 +4,7 @@ import {InputAdornment} from "@mui/material";
 import useClickOutside from "./useClickOutside";
 import TextField from "@mui/material/TextField";
 
-export default function ColorPicker({color, onChange}) {
+export default function ColorPicker({color, onChange, label}) {
     const popover = useRef();
     const [isOpen, toggle] = useState(false);
 

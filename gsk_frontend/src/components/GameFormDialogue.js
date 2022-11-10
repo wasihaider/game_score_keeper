@@ -6,6 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import {styled} from "@mui/material/styles";
+import ColorPicker from "./ColorPicker";
 
 const StyledDialog = styled(Dialog)(({theme}) => ({
     '& .MuiDialog-paper': {
@@ -14,8 +15,15 @@ const StyledDialog = styled(Dialog)(({theme}) => ({
     }
 }))
 
-export default function FormDialog(props) {
-    const {state, handle_game, handle_cancel, handle_add, title} = props
+export default function FormDialog({
+                                       state,
+                                       handle_game,
+                                       handle_cancel,
+                                       handle_add,
+                                       title,
+                                       gameColor,
+                                       handleColorOnChange
+                                   }) {
     return (
         <div>
             <StyledDialog open={state} onClose={handle_cancel}>
@@ -31,6 +39,7 @@ export default function FormDialog(props) {
                         color="secondary"
                         onChange={handle_game}
                     />
+                    <ColorPicker color={gameColor} onChange={handleColorOnChange}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handle_cancel} color='secondary'>Cancel</Button>

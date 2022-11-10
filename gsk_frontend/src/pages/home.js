@@ -16,6 +16,7 @@ export default function Home() {
     const [games, setGames] = useState([])
     const [openDialogue, setOpenDialogue] = React.useState(false);
     const [gameName, setGameName] = useState("")
+    const [gameColor, setGameColor] = useState(randomColor())
     const navigate = useNavigate()
 
     const handleClickOpen = () => setOpenDialogue(true);
@@ -30,7 +31,7 @@ export default function Home() {
 
     const handlerAddGame = () => {
         const game_data = {
-            color: randomColor(),
+            color: gameColor,
             name: gameName
         }
         axios.post(`${BASE_API_URL}${GAME_ENDPOINT}`, game_data)
@@ -62,7 +63,9 @@ export default function Home() {
                     </Grid>
                     <GameFormDialogue handle_open={handleClickOpen} handle_cancel={handleCancel} state={openDialogue}
                                       handle_game={handleGameInput} handle_add={handlerAddGame}
-                                      title='Add new game'/>
+                                      title='Add new game' gameColor={gameColor} handleColorOnChange={
+                        color => setGameColor(color)
+                    }/>
                     {
                         games.map(game => {
                             return (

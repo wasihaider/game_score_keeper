@@ -16,6 +16,7 @@ export default function Players() {
     const [players, setPlayers] = useState([])
     const [openDialogue, setOpenDialogue] = React.useState(false);
     const [playerName, setPlayerName] = useState("")
+    const [playerColor, setPlayerColor] = useState(randomColor())
     const navigate = useNavigate()
 
     const handleClickOpen = () => setOpenDialogue(true);
@@ -30,7 +31,7 @@ export default function Players() {
     const handleClickNewPlayer = () => {
         const player_data = {
             name: playerName,
-            color: randomColor(),
+            color: playerColor,
         }
         axios.post(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${PLAYER_LIST_ENDPOINT}`, player_data)
             .then(res => setPlayers([...players, res.data]))
@@ -59,7 +60,9 @@ export default function Players() {
                 </Grid>
                 <GameFormDialogue handle_open={handleClickOpen} handle_cancel={handleCancel} state={openDialogue}
                                   handle_game={handleGameInput} handle_add={handleClickNewPlayer}
-                                  title="Add new player"/>
+                                  title="Add new player" gameColor={playerColor} handleColorOnChange={
+                    color => setPlayerColor(color)
+                }/>
                 {
                     players.map(player => {
                         return (
