@@ -26,8 +26,8 @@ const FireNav = styled(List)({
 });
 
 export default function GameDrawerListItems(props) {
+    const {pages} = props
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const {pages} = props;
 
     const handleListItemClick = (e, index) => setSelectedIndex(index);
 

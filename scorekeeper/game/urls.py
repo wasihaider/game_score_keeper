@@ -1,12 +1,13 @@
 from django.urls import path
 from .views import (GameListView, GameDetailView, GamePlayersListView, GamePlayerDetailView, GameMatchListView,
                     GameMatchDetailView, GameMatchCreateView, MatchRowDetailView, MatchRowListView, MatchResultView,
-                    MatchEndView, GameStatsView)
+                    MatchEndView, GameStatsView, GamePlayerRUView)
 
 urlpatterns = [
     path("", GameListView.as_view(), name="game-list"),
     path("<int:pk>", GameDetailView.as_view(), name="game-detail"),
     path("<int:game_id>/players", GamePlayersListView.as_view(), name="game-player-list"),
+    path("player/ru/<int:pk>", GamePlayerRUView.as_view(), name="game-player-ru"),
     path("player/<int:pk>", GamePlayerDetailView.as_view(), name="game-player-detail"),
     path("<int:game_id>/matches", GameMatchListView.as_view(), name="game-match-list"),
     path("<int:game_id>/matches/new", GameMatchCreateView.as_view(), name="game-match-new"),

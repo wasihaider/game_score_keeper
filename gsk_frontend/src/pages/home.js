@@ -24,6 +24,7 @@ export default function Home() {
 
     const beginGameHandler = e => {
         const data_id = e.target.attributes.dataid.value
+        localStorage.setItem('gameId', data_id)
         navigate(`game/${data_id}`)
     }
 

@@ -39,6 +39,11 @@ class GamePlayersListView(generics.ListCreateAPIView):
         return super(GamePlayersListView, self).create(request, args, kwargs)
 
 
+class GamePlayerRUView(generics.RetrieveUpdateAPIView):
+    serializer_class = GamePlayerSerializer
+    queryset = Player.objects.all()
+
+
 class GamePlayerDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PlayerSerializer
     queryset = Player.objects.all()

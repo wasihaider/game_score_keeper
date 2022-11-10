@@ -5,7 +5,9 @@ import Game from "./pages/Game";
 import Players from './components/Players'
 import Matches from "./components/Matches";
 import Stats from "./components/Stats"
-import PlayerDetails from "./pages/player";
+import PlayerDetails from "./components/PlayerDetails";
+import PlayerStats from "./components/PlayerStats";
+import Player from "./pages/player";
 
 
 class App extends Component {
@@ -19,7 +21,11 @@ class App extends Component {
                     <Route path='matches' element={<Matches />}/>
                     <Route path='stats' element={<Stats />}/>
                 </Route>
-                <Route path='player/:playerId' element={<PlayerDetails />} />
+                <Route path='player/:playerId' element={<Player />}>
+                    <Route index element={<PlayerStats />} />
+                    <Route path='details' element={<PlayerDetails />} />
+                    <Route path='stats' element={<PlayerStats />} />
+                </Route>
             </Routes>
         )
     }
