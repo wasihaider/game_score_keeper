@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import {Button, FormGroup} from "@mui/material";
+import {Button} from "@mui/material";
 import {BASE_API_URL, GAME_ENDPOINT, PLAYER_RU_ENDPOINT} from "../constants";
 import {useParams} from "react-router-dom";
 import TextField from "@mui/material/TextField";
@@ -9,8 +9,7 @@ import ColorPicker from './ColorPicker'
 export default function PlayerDetails() {
     const [player, setPlayer] = useState({})
     const {playerId} = useParams()
-    const gameId = localStorage.getItem("gameId")
-    const [openColorPicker, setOpenColorPicker] = useState(false)
+    const [success, setSuccess] = useState(false)
 
     useEffect(() => {
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${PLAYER_RU_ENDPOINT}/${playerId}`)
@@ -27,7 +26,10 @@ export default function PlayerDetails() {
             color: player.color,
             game: player.game
         })
-            .then(res => {})
+            .then(res => {
+                setPlayer(res.data)
+                setSuccess(true)
+            })
             .catch(e => console.log(e))
     }
 
@@ -48,7 +50,15 @@ export default function PlayerDetails() {
                 <ColorPicker color={player.color} onChange={
                     color => setPlayer({...player, color: color})
                 }/>
-                <Button fullWidth type='submit' variant='contained' sx={{mt: '1rem'}}>Save</Button>
+                <Button
+                    fullWidth
+                    type='submit'
+                    variant='contained'
+                    sx={{mt: '1rem'}}
+                    color={success ? "success": "primary"}
+                >
+                    {success ? "Saved!": "Save"}
+                </Button>
             </form>
         </div>
     )
