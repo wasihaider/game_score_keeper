@@ -1,4 +1,4 @@
-from .models import Game, Player, Match, MatchRow, PlayerMatch, MatchRowIndividualScore
+from .models import Game, Player, Match, MatchRow, Result, MatchRowIndividualScore
 from rest_framework import serializers
 
 
@@ -33,20 +33,53 @@ class PlayerSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created_on", "modified_on", "score_average", "points_average")
 
 
+class ResultSerializer(serializers.ModelSerializer):
+    player_name = serializers.CharField(source="player.name", read_only=True)
+
+    class Meta:
+        model = Result
+        fields = "__all__"
+        read_only_fields = ("id", "created_on", "modified_on", "player_name")
+
+
+class GameMatchListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
+        fields = ("id", "created_on")
+
+
 class GameMatchSerializer(serializers.ModelSerializer):
+    results = ResultSerializer(many=True)
+
+    def create(self, validated_data):
+        results = validated_data.pop("results")
+        match = Match.objects.create(**validated_data)
+
+        for result in results:
+            Result.objects.create(match=match, **result)
+        return match
+
+    def update(self, instance, validated_data):
+        if "results" in validated_data:
+            results = validated_data.pop("results")
+            for result in results:
+                result_instance = Result.objects.get(id=result["id"])
+                for key, value in result.items():
+                    result_instance.__setattr__(key, value)
+                result_instance.save()
+        for key, value in validated_data.items():
+            instance.__setattr__(key, value)
+        instance.save()
+
+    def validate_results(self, value):
+        if not value:
+            raise serializers.ValidationError("Scores can not be empty.")
+        return value
+
     class Meta:
         model = Match
         fields = "__all__"
         read_only_fields = ("id", "created_on", "modified_on")
-
-
-class MatchPlayerSerializer(serializers.ModelSerializer):
-    player_name = serializers.CharField(source="player.name", read_only=True)
-
-    class Meta:
-        model = PlayerMatch
-        fields = "__all__"
-        read_only_fields = ("id", "created_on", "modified_on", "player_name")
 
 
 class GameStatSerializer(serializers.ModelSerializer):
@@ -57,17 +90,19 @@ class GameStatSerializer(serializers.ModelSerializer):
     points_average = serializers.FloatField(read_only=True)
 
     class Meta:
-        model = PlayerMatch
+        model = Result
         fields = ("player_name", "scores_total", "points_total", "scores_average", "points_average")
 
 
+# todo: delete this
 class MatchRowIndividualScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = MatchRowIndividualScore
-        exclude = ("row", )
+        exclude = ("row",)
         read_only_fields = ("id", "created_on", "modified_on")
 
 
+# TODO: delete this
 class MatchRowSerializer(serializers.ModelSerializer):
     scores = MatchRowIndividualScoreSerializer(many=True)
 

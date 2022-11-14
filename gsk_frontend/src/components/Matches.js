@@ -1,120 +1,170 @@
 import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import {styled} from '@mui/material/styles'
+import axios from "axios";
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import {Fab, TablePagination} from "@mui/material";
+import {useEffect, useState} from "react";
+import {BASE_API_URL, GAME_ENDPOINT, MATCH_LIST_ENDPOINT} from "../constants";
+import {useParams} from "react-router-dom";
+import AddIcon from '@mui/icons-material/Add';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 90,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
-
-function customCheckbox(theme) {
-  return {
-    '& .MuiCheckbox-root svg': {
-      width: 16,
-      height: 16,
-      backgroundColor: 'transparent',
-      border: `1px solid ${
-        theme.palette.mode === 'light' ? '#d9d9d9' : 'rgb(67, 67, 67)'
-      }`,
-      borderRadius: 2,
-    },
-    '& .MuiCheckbox-root svg path': {
-      display: 'none',
-    },
-    '& .MuiCheckbox-root.Mui-checked:not(.MuiCheckbox-indeterminate) svg': {
-      backgroundColor: '#1890ff',
-      borderColor: '#1890ff',
-    },
-    '& .MuiCheckbox-root.Mui-checked .MuiIconButton-label:after': {
-      position: 'absolute',
-      display: 'table',
-      border: '2px solid #fff',
-      borderTop: 0,
-      borderLeft: 0,
-      transform: 'rotate(45deg) translate(-50%,-50%)',
-      opacity: 1,
-      transition: 'all .2s cubic-bezier(.12,.4,.29,1.46) .1s',
-      content: '""',
-      top: '50%',
-      left: '39%',
-      width: 5.71428571,
-      height: 9.14285714,
-    },
-    '& .MuiCheckbox-root.MuiCheckbox-indeterminate .MuiIconButton-label:after': {
-      width: 8,
-      height: 8,
-      backgroundColor: '#1890ff',
-      transform: 'none',
-      top: '39%',
-      border: 0,
-    },
-  };
+function createData(id, date) {
+    return {
+        id,
+        date,
+        history: [
+            {
+                date: '2020-01-05',
+                customerId: '11091700',
+                amount: 3,
+            },
+            {
+                date: '2020-01-02',
+                customerId: 'Anonymous',
+                amount: 1,
+            },
+        ],
+    };
 }
 
+function Row(props) {
+    const {row} = props;
+    const [open, setOpen] = React.useState(false);
 
-const StyledDataGrid = styled(DataGrid)(({theme}) => ({
-  border: 0,
-  color: theme.palette.text.primary,
-  letterSpacing: 'normal',
-  '& .MuiDataGrid-columnsContainer': {
-    backgroundColor: '#1d1d1d',
-  },
-  '& .MuiDataGrid-iconSeparator': {
-    display: 'none',
-  },
-  '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
-    borderRight: '1px solid #303030',
-  },
-  '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
-    borderBottom: '1px solid #303030',
-  },
-  '& .MuiDataGrid-cell': {
-    color: 'rgba(255,255,255,0.65)',
-  },
-  '& .MuiPaginationItem-root': {
-    borderRadius: 0,
-  },
-  ...customCheckbox(theme),
-}));
+    return (
+        <React.Fragment>
+            <TableRow>
+                <TableCell sx={{borderBottom: 'none'}}>
+                    <IconButton color='inherit'
+                                aria-label="expand row"
+                                size="small"
+                                onClick={() => setOpen(!open)}
+                    >
+                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                    </IconButton>
+                </TableCell>
+                <TableCell component="th" scope="row" sx={{borderBottom: 'none'}}>
+                    {row.id}
+                </TableCell>
+                <TableCell align="right" sx={{borderBottom: 'none'}}>{row.date}</TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box sx={{margin: 1}}>
+                            <Typography variant="h6" gutterBottom component="div">
+                                History
+                            </Typography>
+                            <Table size="small" aria-label="purchases">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Date</TableCell>
+                                        <TableCell>Customer</TableCell>
+                                        <TableCell align="right">Amount</TableCell>
+                                        <TableCell align="right">Total price ($)</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {row.history.map((historyRow) => (
+                                        <TableRow key={historyRow.date}>
+                                            <TableCell component="th" scope="row">
+                                                {historyRow.date}
+                                            </TableCell>
+                                            <TableCell>{historyRow.customerId}</TableCell>
+                                            <TableCell align="right">{historyRow.amount}</TableCell>
+                                            <TableCell align="right">
+                                                {Math.round(historyRow.amount * row.price * 100) / 100}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </React.Fragment>
+    );
+}
 
-export default function Players() {
-  return (
-    <div style={{ height: 400, width: '100%' }}>
-      <StyledDataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-      />
-    </div>
-  );
+export default function CollapsibleTable() {
+
+    const {gameId} = useParams()
+
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rows, setRows] = useState([])
+
+    const currentRows = rows.filter((r, ind) => {
+        return ind >= rowsPerPage * page && ind < rowsPerPage * (page + 1);
+    });
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (
+        event
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    useEffect(() => {
+        axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${MATCH_LIST_ENDPOINT}`)
+            .then(res => {
+                setRows(res.data.map(match => {
+                    const d = new Date(match.created_on);
+                    return createData(match.id, d.toLocaleString());
+                }))
+            })
+            .catch(e => console.log(e))
+    }, [])
+
+    return (
+        <>
+            <Box sx={{'& > :not(style)': {m: 1}}}>
+                <Fab color="secondary" variant='extended' aria-label="add">
+                    <AddIcon sx={{ mr: 1 }}/>
+                    New Match
+                </Fab>
+            </Box>
+            <TableContainer component={Paper}>
+                <Table aria-label="collapsible table" size='small'>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell/>
+                            <TableCell>Match ID</TableCell>
+                            <TableCell align="right">Date played on</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {rows.map((row) => (
+                            <Row key={row.id} row={row}/>
+                        ))}
+                    </TableBody>
+                </Table>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </TableContainer>
+        </>
+    );
 }

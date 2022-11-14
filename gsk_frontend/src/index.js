@@ -33,6 +33,7 @@ const theme = createTheme({
         },
         background: {
             default: '#00000A',
+            paper: '#000000',
         },
         divider: '#bdbdbd',
     },

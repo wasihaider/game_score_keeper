@@ -55,17 +55,19 @@ class Match(BaseModel):
     status = models.CharField(max_length=2, choices=STATUS_CHOICE, default="C")
 
 
+# TODO: Delete this model
 class MatchRow(BaseModel):
     match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
 
 
+# TODO: delete this model
 class MatchRowIndividualScore(BaseModel):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
     score = models.IntegerField()
     row = models.ForeignKey(MatchRow, related_name="scores", on_delete=models.CASCADE, null=False)
 
 
-class PlayerMatch(BaseModel):
+class Result(BaseModel):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
     score = models.IntegerField()
     points = models.FloatField()
