@@ -16,7 +16,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {Fab, TablePagination} from "@mui/material";
 import {useEffect, useState} from "react";
 import {BASE_API_URL, GAME_ENDPOINT, MATCH_LIST_ENDPOINT} from "../constants";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 
 function createData(id, date) {
@@ -101,6 +101,7 @@ function Row(props) {
 export default function CollapsibleTable() {
 
     const {gameId} = useParams()
+    const navigate = useNavigate()
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -135,7 +136,7 @@ export default function CollapsibleTable() {
     return (
         <>
             <Box sx={{'& > :not(style)': {m: 1}}}>
-                <Fab color="secondary" variant='extended' aria-label="add">
+                <Fab color="secondary" variant='extended' aria-label="add" onClick={() => navigate("/newMatch")}>
                     <AddIcon sx={{ mr: 1 }}/>
                     New Match
                 </Fab>

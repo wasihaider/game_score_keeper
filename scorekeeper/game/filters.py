@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from .models import PlayerMatch
+from .models import Result
 
 
 class GameStatsFilterSet(filters.FilterSet):
@@ -7,6 +7,6 @@ class GameStatsFilterSet(filters.FilterSet):
     end_date = filters.DateTimeFilter(field_name='created_at', lookup_expr='lte')
 
     class Meta:
-        model = PlayerMatch
+        model = Result
         fields = ("start_date", "end_date")
 

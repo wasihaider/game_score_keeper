@@ -46,13 +46,7 @@ class Player(BaseModel):
 
 
 class Match(BaseModel):
-    STATUS_CHOICE = (
-        ("C", "Created"),
-        ("P", "In Play"),
-        ("E", "Ended")
-    )
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICE, default="C")
 
 
 # TODO: Delete this model
@@ -72,4 +66,4 @@ class Result(BaseModel):
     score = models.IntegerField()
     points = models.FloatField()
     position = models.PositiveIntegerField()
-    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
+    match = models.ForeignKey(Match, related_name="results", on_delete=models.CASCADE, null=False)
