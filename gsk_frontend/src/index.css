@@ -22,6 +22,12 @@ code {
   padding: 0 !important;
 }
 
+.just-center {
+  justify-content: center;
+  height: 80vh;
+  overflow: auto;
+}
+
 .center-grid-container {
   display: flex !important;
   align-items: center;

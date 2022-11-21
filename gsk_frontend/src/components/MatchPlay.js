@@ -31,7 +31,7 @@ function getInitialState(players) {
     return score
 }
 
-export default function Match({players}) {
+export default function Match({players, endGame}) {
     const [scoreRow, setScoreRow] = useState([])
     const [openDialog, setOpenDialog] = useState(false)
     const [turnScore, setTurnScore] = useState({})
@@ -67,7 +67,7 @@ export default function Match({players}) {
         })
         axios.post(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${NEW_MATCH}`, data)
             .then(res => {
-                console.log(res.data)
+                endGame(res.data)
             })
             .catch(e => console.log(e))
     }

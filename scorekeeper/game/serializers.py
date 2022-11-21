@@ -34,12 +34,13 @@ class PlayerSerializer(serializers.ModelSerializer):
 
 
 class ResultSerializer(serializers.ModelSerializer):
-    player_name = serializers.CharField(source="player.name", read_only=True)
+    name = serializers.CharField(source="player.name", read_only=True)
+    color = serializers.CharField(source="player.color", read_only=True)
 
     class Meta:
         model = Result
         exclude = ("match",)
-        read_only_fields = ("id", "created_on", "modified_on", "player_name")
+        read_only_fields = ("id", "created_on", "modified_on", "name", "color")
 
 
 class GameMatchListSerializer(serializers.ModelSerializer):
