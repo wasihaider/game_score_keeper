@@ -4,9 +4,8 @@ from .utils import calculate_points
 from .models import Game, Player, Match, Result
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
                           GameMatchListSerializer, ResultSerializer)
-from .filters import GameStatsFilterSet
+from .filters import GameStatsFilterSet, MatchFilterSet
 from rest_framework import generics, status
-from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from django.db.models import Sum, Avg
@@ -52,6 +51,9 @@ class GamePlayerDetailView(generics.RetrieveUpdateDestroyAPIView):
 class GameMatchListView(generics.ListAPIView):
     serializer_class = GameMatchListSerializer
     queryset = Match.objects.all()
+    filter_backends = [drf_filters.DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = MatchFilterSet
+    ordering_fields = "__all__"
 
     def get_queryset(self):
         return self.queryset.filter(game__id=self.kwargs["game_id"])
@@ -97,7 +99,7 @@ class GameStatsView(generics.ListAPIView):
     serializer_class = ResultSerializer
     queryset = Result.objects.all()
     filter_backends = [drf_filters.DjangoFilterBackend, filters.OrderingFilter]
-    filter_class = GameStatsFilterSet
+    filterset_class = GameStatsFilterSet
     ordering_fields = "__all__"
 
     def get_queryset(self):

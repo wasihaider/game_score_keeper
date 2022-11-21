@@ -103,27 +103,11 @@ export default function CollapsibleTable() {
     const {gameId} = useParams()
     const navigate = useNavigate()
 
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [rows, setRows] = useState([])
 
-    const currentRows = rows.filter((r, ind) => {
-        return ind >= rowsPerPage * page && ind < rowsPerPage * (page + 1);
-    });
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (
-        event
-    ) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
     useEffect(() => {
-        axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${MATCH_LIST_ENDPOINT}`)
+        const query = "ordering=-created_on"
+        axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${MATCH_LIST_ENDPOINT}?${query}`)
             .then(res => {
                 setRows(res.data.map(match => {
                     const d = new Date(match.created_on);
@@ -156,15 +140,6 @@ export default function CollapsibleTable() {
                         ))}
                     </TableBody>
                 </Table>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
             </TableContainer>
         </>
     );
