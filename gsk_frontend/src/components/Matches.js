@@ -13,11 +13,15 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {Fab, TablePagination} from "@mui/material";
+import {Fab, TablePagination, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {BASE_API_URL, GAME_ENDPOINT, MATCH_LIST_ENDPOINT} from "../constants";
 import {useNavigate, useParams} from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
+import moment from "moment/moment";
+import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from 'dayjs';
 
 function createData(id, date) {
     return {
@@ -98,15 +102,18 @@ function Row(props) {
     );
 }
 
-export default function CollapsibleTable() {
+export default function Matches() {
 
     const {gameId} = useParams()
     const navigate = useNavigate()
 
     const [rows, setRows] = useState([])
 
+    const [startDate, setStartDate] = React.useState(dayjs().subtract(1, 'month').format('YYYY-MM-DD'))
+    const [endDate, setEndDate] = React.useState(dayjs().format('YYYY-MM-DD'))
+
     useEffect(() => {
-        const query = "ordering=-created_on"
+        const query = `ordering=-created_on&start_date=${startDate.toString()}&end_date=${endDate.toString()}`
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${MATCH_LIST_ENDPOINT}?${query}`)
             .then(res => {
                 setRows(res.data.map(match => {
@@ -115,16 +122,35 @@ export default function CollapsibleTable() {
                 }))
             })
             .catch(e => console.log(e))
-    }, [])
+    }, [startDate, endDate])
 
     return (
         <>
             <Box sx={{'& > :not(style)': {m: 1}}}>
                 <Fab color="secondary" variant='extended' aria-label="add" onClick={() => navigate("/newMatch")}>
-                    <AddIcon sx={{ mr: 1 }}/>
+                    <AddIcon sx={{mr: 1}}/>
                     New Match
                 </Fab>
             </Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                    onChange={(value) => setStartDate(value.format('YYYY-MM-DD'))}
+                    value={startDate}
+                    inputFormat='YYYY-MM-DD'
+                    renderInput={(params) => <TextField {...params} />}
+                    color='secondary'
+                    label='Start Date'
+                    showToolbar
+                />
+                <DesktopDatePicker
+                    onChange={(value) => setEndDate(value.format('YYYY-MM-DD'))}
+                    value={endDate}
+                    inputFormat='YYYY-MM-DD'
+                    renderInput={(params) => <TextField {...params} />}
+                    color='secondary'
+                    label='End Date'
+                />
+            </LocalizationProvider>
             <TableContainer component={Paper}>
                 <Table aria-label="collapsible table" size='small'>
                     <TableHead>
