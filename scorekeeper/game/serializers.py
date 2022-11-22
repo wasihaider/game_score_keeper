@@ -88,13 +88,17 @@ class GameMatchSerializer(serializers.ModelSerializer):
 
 
 class GameStatSerializer(serializers.ModelSerializer):
-    player_name = serializers.CharField(source="player.name", read_only=True)
+    position = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    color = serializers.CharField(read_only=True)
     scores_total = serializers.IntegerField(read_only=True)
     points_total = serializers.FloatField(read_only=True)
     scores_average = serializers.FloatField(read_only=True)
     points_average = serializers.FloatField(read_only=True)
+    rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Result
-        fields = ("player_name", "scores_total", "points_total", "scores_average", "points_average")
-
+        fields = (
+            "name", "color", "scores_total", "points_total", "scores_average", "points_average", "rating", "position"
+        )

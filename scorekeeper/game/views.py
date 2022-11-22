@@ -1,17 +1,18 @@
 import logging
-
+from django.core import serializers
 from .utils import calculate_points
 from .models import Game, Player, Match, Result
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
-                          GameMatchListSerializer, ResultSerializer)
+                          GameStatSerializer)
 from .filters import GameStatsFilterSet, MatchFilterSet
 from .pagination import MatchListPagination
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from django.db.models import Sum, Avg
+from django.db.models import Sum, Avg, F
 from django_filters import rest_framework as drf_filters
 from rest_framework import filters
+from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
 
@@ -101,13 +102,16 @@ class CreateMatchView(generics.CreateAPIView):
 
 
 class GameStatsView(generics.ListAPIView):
-    serializer_class = ResultSerializer
     queryset = Result.objects.all()
+    serializer_class = GameStatSerializer
     filter_backends = [drf_filters.DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = GameStatsFilterSet
-    ordering_fields = "__all__"
 
     def get_queryset(self):
-        return self.queryset.filter(match__game__id=self.kwargs["game_id"]) \
+        return self.queryset.filter(match__game__id=self.kwargs['game_id']) \
+            .values('player') \
             .annotate(scores_total=Sum('score'), points_total=Sum('points'),
-                      scores_average=Avg('score'), points_average=Avg('points'))
+                      scores_average=Avg('score'), points_average=Avg('points'),
+                      name=F('player__name'), color=F('player__color')) \
+            .annotate(rating=F('points_average') * 500) \
+            .order_by('-rating')
