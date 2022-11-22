@@ -38,7 +38,7 @@ class Player(BaseModel):
     color = models.CharField(max_length=7, null=False)
 
     def rank(self):
-        count = Player.objects.filter(points_average__lt=self.points_average).count()
+        count = Player.objects.filter(points_average__gt=self.points_average).count()
         return count + 1
 
     class Meta:

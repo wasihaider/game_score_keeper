@@ -5,6 +5,7 @@ from .models import Game, Player, Match, Result
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
                           GameMatchListSerializer, ResultSerializer)
 from .filters import GameStatsFilterSet, MatchFilterSet
+from .pagination import MatchListPagination
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -49,10 +50,11 @@ class GamePlayerDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class GameMatchListView(generics.ListAPIView):
-    serializer_class = GameMatchListSerializer
+    serializer_class = GameMatchSerializer
     queryset = Match.objects.all()
     filter_backends = [drf_filters.DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = MatchFilterSet
+    pagination_class = MatchListPagination
     ordering_fields = "__all__"
 
     def get_queryset(self):
@@ -69,10 +71,13 @@ class CreateMatchView(generics.CreateAPIView):
     queryset = Match.objects.all()
 
     def create(self, request, *args, **kwargs):
-        results = request.data
+        results = sorted(request.data, key=lambda x: x['score'], reverse=True)
+        position = 1
         for idx, result in enumerate(results):
-            result['position'] = idx + 1
-            result['points'] = calculate_points(result['score'], idx + 1, len(results), results[0]['score'])
+            if idx != 0 and results[idx - 1]['score'] != result['score']:
+                position += 1
+            result['position'] = position
+            result['points'] = calculate_points(result['score'], position, len(results), results[0]['score'])
 
         match_serializer = self.get_serializer(data={'results': results, 'game': kwargs['game_id']})
         match_serializer.is_valid(raise_exception=True)

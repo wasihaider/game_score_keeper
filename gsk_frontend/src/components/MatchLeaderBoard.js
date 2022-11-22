@@ -10,6 +10,7 @@ import {Button, Fab} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useNavigate} from "react-router-dom";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import {alpha} from "@mui/material/styles";
 
 
 export default function MatchLeaderBoard({results}) {
@@ -37,9 +38,7 @@ export default function MatchLeaderBoard({results}) {
                     <TableBody>
                         {
                             results.map(result => (
-                                <TableRow key={result.position} sx={{
-                                    '.MuiTableRow-hover': {color: result.color}
-                                }} hover={true}>
+                                <TableRow key={result.position} sx={{bgcolor: alpha(result.color, 0.25)}}>
                                     <TableCell sx={{borderBottom: 'none'}}>{result.position}</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{result.name}</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{result.score}</TableCell>

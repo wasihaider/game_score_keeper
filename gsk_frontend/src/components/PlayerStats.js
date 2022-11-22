@@ -10,7 +10,7 @@ export default function PlayerStats() {
     const {playerId} = useParams()
     const [player, setPlayer] = useState({color: "#ffffff"})
 
-    useEffect(()=> {
+    useEffect(() => {
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${PLAYER_DETAIL_ENDPOINT}/${playerId}`)
             .then(res => {
                 console.log(res.data)
@@ -32,16 +32,28 @@ export default function PlayerStats() {
                 <Grid item xs={12}>
                     <Typography variant='body1'>All Times</Typography>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                    <Card raised sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh'}}>
+                <Grid item xs={3} md={3}>
+                    <Card raised
+                          sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh', maxHeight: '25vh'}}>
                         <CardContent>
                             <Typography variant="h6">Rank</Typography>
                             <Typography variant="h3">{player.rank}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                    <Card raised sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh'}}>
+                <Grid item xs={3} md={3}>
+                    <Card raised
+                          sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh', maxHeight: '25vh'}}>
+                        <CardContent>
+                            <Typography variant="h6">Rating</Typography>
+                            <Typography
+                                variant="h3">{Math.round((player.rating + Number.EPSILON) * 100) / 100}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={6} md={6}>
+                    <Card raised
+                          sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh', maxHeight: '25vh'}}>
                         <CardContent>
                             <Typography variant="h6">Matches</Typography>
                             <Grid container direction='row' spacing={1}>
@@ -64,8 +76,9 @@ export default function PlayerStats() {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                    <Card raised sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh'}}>
+                <Grid item xs={6} md={6}>
+                    <Card raised
+                          sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh', maxHeight: '25vh'}}>
                         <CardContent>
                             <Typography variant="h6">Scores</Typography>
                             <Grid container direction='row' spacing={1}>
@@ -81,14 +94,16 @@ export default function PlayerStats() {
                                     <Typography variant='caption'>Average: </Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant='body1'>{player.scores_average}</Typography>
+                                    <Typography
+                                        variant='body1'>{Math.round((player.scores_average + Number.EPSILON) * 100) / 100}</Typography>
                                 </Grid>
                             </Grid>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                    <Card raised sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh'}}>
+                <Grid item xs={6} md={6}>
+                    <Card raised
+                          sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh', maxHeight: '25vh'}}>
                         <CardContent>
                             <Typography variant="h6">Points</Typography>
                             <Grid container direction='row' spacing={1}>
@@ -96,7 +111,8 @@ export default function PlayerStats() {
                                     <Typography variant='caption'>Total: </Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant='body1'>{player.points}</Typography>
+                                    <Typography
+                                        variant='body1'>{Math.round((player.points + Number.EPSILON) * 100) / 100}</Typography>
                                 </Grid>
                             </Grid>
                             <Grid container direction='row' spacing={1}>
@@ -104,7 +120,8 @@ export default function PlayerStats() {
                                     <Typography variant='caption'>Average: </Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant='body1'>{player.points_average}</Typography>
+                                    <Typography
+                                        variant='body1'>{Math.round((player.points_average + Number.EPSILON) * 100) / 100}</Typography>
                                 </Grid>
                             </Grid>
                         </CardContent>

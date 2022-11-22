@@ -37,6 +37,9 @@ const theme = createTheme({
         },
         divider: '#bdbdbd',
     },
+    datePicker: {
+        headerColor: '#7986CB',
+    },
     shape: {
         borderRadius: 4,
     },
