@@ -138,12 +138,12 @@ function Row(props) {
                                 <TableBody>
                                     {row.results.map(({id, name, position, score, points, color}) => (
                                         <TableRow key={id} sx={{ bgcolor: alpha(color, 0.25) }}>
-                                            <TableCell component="th" scope="row" sx={{textDecorationColor: color}}>
+                                            <TableCell component="th" scope="row" sx={{borderBottom: 'none'}}>
                                                 {position}
                                             </TableCell>
-                                            <TableCell>{name}</TableCell>
-                                            <TableCell>{score}</TableCell>
-                                            <TableCell>
+                                            <TableCell sx={{borderBottom: 'none'}}>{name}</TableCell>
+                                            <TableCell sx={{borderBottom: 'none'}}>{score}</TableCell>
+                                            <TableCell sx={{borderBottom: 'none'}}>
                                                 {Math.round((points + Number.EPSILON) * 100) / 100}
                                             </TableCell>
                                         </TableRow>
