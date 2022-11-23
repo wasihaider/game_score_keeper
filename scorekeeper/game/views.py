@@ -115,3 +115,22 @@ class GameStatsView(generics.ListAPIView):
                       name=F('player__name'), color=F('player__color')) \
             .annotate(rating=F('points_average') * 500) \
             .order_by('-rating')
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        data = serializer.data
+
+        position = 1
+        for idx, d in enumerate(data):
+            if idx != 0 and data[idx-1]['rating'] != d['rating']:
+                position += 1
+            d['position'] = position
+
+        return Response(data, status=status.HTTP_200_OK)
