@@ -13,6 +13,7 @@ import {BASE_API_URL, GAME_ENDPOINT, STATS} from "../constants";
 import dayjs from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import LinearProgressBar from "./LinearProgressBar";
 
 
 const stats = [
@@ -78,8 +79,7 @@ export default function Stats() {
         if (dateType === 'start') {
             setStartDate(formattedValue)
             setQuery(`start_date=${formattedValue}&end_date=${endDate}`)
-        }
-        else {
+        } else {
             setEndDate(formattedValue)
             setQuery(`start_date=${startDate}&end_date=${formattedValue}`)
         }
@@ -88,21 +88,20 @@ export default function Stats() {
     const handleTogglePeriod = (event, newPeriod) => {
         setShowPicker(newPeriod === '-2');
         setPeriod(newPeriod);
-
+        const end = dayjs().format('YYYY-MM-DD')
         if (newPeriod === '7') {
-            console.log('Setting period to 7 days')
-            setQuery(`start_date=${
-                dayjs().subtract(7, 'days').format('YYYY-MM-DD')
-            }&end_date=${
-                dayjs().format('YYYY-MM-DD')
-            }`)
+            const start = dayjs().subtract(7, 'days').format('YYYY-MM-DD')
+            setStartDate(start)
+            setEndDate(end)
+            setQuery(`start_date=${start}&end_date=${end}`)
         } else if (newPeriod === '30') {
-            setQuery(`start_date=${
-                dayjs().subtract(1, 'month').format('YYYY-MM-DD')
-            }&end_date=${
-                dayjs().format('YYYY-MM-DD')
-            }`)
+            const start = dayjs().subtract(1, 'month').format('YYYY-MM-DD')
+            setStartDate(start)
+            setEndDate(end)
+            setQuery(`start_date=${start}&end_date=${end}`)
         } else if (newPeriod === '-1') {
+            setStartDate('')
+            setEndDate(end)
             setQuery('')
         }
     };
@@ -193,14 +192,14 @@ export default function Stats() {
             <Box sx={{flexGrow: 1}}>
                 <Grid container spacing={2}>
                     {
-                        stats.slice(0, 3).map(({color, name, position, rating}) => (
+                        stats.slice(0, 3).map(({color, name, position, rating, win, matches_total}) => (
                             <Grid item xs={4} md={4} key={name}>
                                 <Card raised
                                       sx={{
                                           backgroundColor: alpha(color, 0.1),
                                           pb: 0,
-                                          minHeight: '25vh',
-                                          maxHeight: '25vh'
+                                          minHeight: '23vh',
+                                          maxHeight: '23vh'
                                       }}>
                                     <CardContent>
                                         <Typography variant="h6">{name}</Typography>
@@ -232,31 +231,29 @@ export default function Stats() {
                         <TableRow>
                             <TableCell>Position</TableCell>
                             <TableCell>Name</TableCell>
-                            <TableCell>Scores Total</TableCell>
-                            <TableCell>Points Total</TableCell>
-                            <TableCell>Score Average</TableCell>
-                            <TableCell>Points Average</TableCell>
+                            <TableCell>Matches</TableCell>
+                            <TableCell>Win</TableCell>
+                            <TableCell>Average</TableCell>
+                            <TableCell>Points</TableCell>
                             <TableCell>Rating</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
                             stats.map(({
-                                           name, color, scores_total, points_total,
-                                           scores_average, points_average, rating, position
+                                           name, color, matches_total, points_total,
+                                           scores_average, win, rating, position
                                        }) => (
                                 <TableRow key={name} sx={{bgcolor: alpha(color, 0.25)}}>
                                     <TableCell sx={{borderBottom: 'none'}}>{position}</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{name}</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{scores_total}</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{
-                                        Math.round((points_total + Number.EPSILON) * 100) / 100
-                                    }</TableCell>
+                                    <TableCell sx={{borderBottom: 'none'}}>{matches_total}</TableCell>
+                                    <TableCell sx={{borderBottom: 'none'}}>{win}</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{
                                         Math.round((scores_average + Number.EPSILON) * 100) / 100
                                     }</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{
-                                        Math.round((points_average + Number.EPSILON) * 100) / 100
+                                        Math.round((points_total + Number.EPSILON) * 100) / 100
                                     }</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{
                                         Math.round((rating + Number.EPSILON) * 100) / 100

@@ -1,3 +1,5 @@
+import math
+
 from .models import Game, Player, Match, Result
 from rest_framework import serializers
 
@@ -21,7 +23,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField('get_rating', read_only=True)
 
     def get_rating(self, instance):
-        return instance.points_average * 500
+        return math.ceil(instance.points_average * 500)
 
     def update(self, instance, validated_data):
         for key, value in validated_data.items():
@@ -91,14 +93,14 @@ class GameStatSerializer(serializers.ModelSerializer):
     position = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
     color = serializers.CharField(read_only=True)
-    scores_total = serializers.IntegerField(read_only=True)
     points_total = serializers.FloatField(read_only=True)
     scores_average = serializers.FloatField(read_only=True)
-    points_average = serializers.FloatField(read_only=True)
     rating = serializers.FloatField(read_only=True)
+    matches_total = serializers.IntegerField(read_only=True)
+    win = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Result
         fields = (
-            "name", "color", "scores_total", "points_total", "scores_average", "points_average", "rating", "position"
+            "name", "color", "points_total", "scores_average", "rating", "position", "matches_total", "win"
         )

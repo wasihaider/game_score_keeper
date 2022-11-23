@@ -1,5 +1,6 @@
 import logging
-from django.core import serializers
+import math
+
 from .utils import calculate_points
 from .models import Game, Player, Match, Result
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
@@ -9,7 +10,7 @@ from .pagination import MatchListPagination
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from django.db.models import Sum, Avg, F
+from django.db.models import Sum, Avg, F, Count, Case, When, IntegerField
 from django_filters import rest_framework as drf_filters
 from rest_framework import filters
 from rest_framework.views import APIView
@@ -108,17 +109,21 @@ class GameStatsView(generics.ListAPIView):
     filterset_class = GameStatsFilterSet
 
     def get_queryset(self):
-        return self.queryset.filter(match__game__id=self.kwargs['game_id']) \
-            .values('player') \
-            .annotate(scores_total=Sum('score'), points_total=Sum('points'),
+        return self.queryset.filter(match__game__id=self.kwargs['game_id'])
+
+    def get_aggregated_queryset(self, queryset):
+        return queryset.values('player') \
+            .annotate(matches_total=Count('score'), points_total=Sum('points'),
                       scores_average=Avg('score'), points_average=Avg('points'),
-                      name=F('player__name'), color=F('player__color')) \
+                      name=F('player__name'), color=F('player__color'),
+                      matches=Count('score'),
+                      win=Count(Case(When(position=1, then=1), output_field=IntegerField()))) \
             .annotate(rating=F('points_average') * 500) \
             .order_by('-rating')
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
+        queryset = self.get_aggregated_queryset(queryset)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -129,8 +134,9 @@ class GameStatsView(generics.ListAPIView):
 
         position = 1
         for idx, d in enumerate(data):
-            if idx != 0 and data[idx-1]['rating'] != d['rating']:
+            if idx != 0 and data[idx - 1]['rating'] != d['rating']:
                 position += 1
             d['position'] = position
+            d['rating'] = math.ceil(d['rating'])
 
         return Response(data, status=status.HTTP_200_OK)

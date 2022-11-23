@@ -37,7 +37,7 @@ export default function PlayerStats() {
                           sx={{backgroundColor: alpha(player.color, 0.1), pb: 0, minHeight: '25vh', maxHeight: '25vh'}}>
                         <CardContent>
                             <Typography variant="h6">Rank</Typography>
-                            <Typography variant="h3">{player.rank}</Typography>
+                            <Typography variant="h3" color={player.color}>{player.rank}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -47,7 +47,8 @@ export default function PlayerStats() {
                         <CardContent>
                             <Typography variant="h6">Rating</Typography>
                             <Typography
-                                variant="h3">{Math.round((player.rating + Number.EPSILON) * 100) / 100}</Typography>
+                                variant="h3"
+                                color={player.color}>{Math.round((player.rating + Number.EPSILON) * 100) / 100}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -58,7 +59,7 @@ export default function PlayerStats() {
                             <Typography variant="h6">Matches</Typography>
                             <Grid container direction='row' spacing={1}>
                                 <Grid item>
-                                    <Typography variant='caption' color={player.color}>Total: </Typography>
+                                    <Typography variant='caption'>Total: </Typography>
                                 </Grid>
                                 <Grid item>
                                     <Typography variant='body1' color={player.color}>{player.total_matches}</Typography>
@@ -66,13 +67,13 @@ export default function PlayerStats() {
                             </Grid>
                             <Grid container direction='row' spacing={1}>
                                 <Grid item>
-                                    <Typography variant='caption' color='#81c784'>Win: </Typography>
+                                    <Typography variant='caption'>Win: </Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant='body1' color='#81c784'>{player.win}</Typography>
+                                    <Typography variant='body1' color={player.color}>{player.win}</Typography>
                                 </Grid>
                             </Grid>
-                            <LinearProgressBar value={player.win / player.total_matches * 100}/>
+                            <LinearProgressBar customColor={player.color} value={player.win / player.total_matches * 100}/>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -86,7 +87,7 @@ export default function PlayerStats() {
                                     <Typography variant='caption'>Total: </Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant='body1'>{player.total_scores}</Typography>
+                                    <Typography variant='body1' color={player.color}>{player.total_scores}</Typography>
                                 </Grid>
                             </Grid>
                             <Grid container direction='row' spacing={1}>
@@ -95,7 +96,8 @@ export default function PlayerStats() {
                                 </Grid>
                                 <Grid item>
                                     <Typography
-                                        variant='body1'>{Math.round((player.scores_average + Number.EPSILON) * 100) / 100}</Typography>
+                                        variant='body1'
+                                        color={player.color}>{Math.round((player.scores_average + Number.EPSILON) * 100) / 100}</Typography>
                                 </Grid>
                             </Grid>
                         </CardContent>
@@ -112,7 +114,8 @@ export default function PlayerStats() {
                                 </Grid>
                                 <Grid item>
                                     <Typography
-                                        variant='body1'>{Math.round((player.points + Number.EPSILON) * 100) / 100}</Typography>
+                                        variant='body1'
+                                        color={player.color}>{Math.round((player.points + Number.EPSILON) * 100) / 100}</Typography>
                                 </Grid>
                             </Grid>
                             <Grid container direction='row' spacing={1}>
@@ -121,7 +124,8 @@ export default function PlayerStats() {
                                 </Grid>
                                 <Grid item>
                                     <Typography
-                                        variant='body1'>{Math.round((player.points_average + Number.EPSILON) * 100) / 100}</Typography>
+                                        variant='body1'
+                                        color={player.color}>{Math.round((player.points_average + Number.EPSILON) * 100) / 100}</Typography>
                                 </Grid>
                             </Grid>
                         </CardContent>
