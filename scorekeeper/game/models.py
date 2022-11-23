@@ -49,18 +49,6 @@ class Match(BaseModel):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
 
 
-# TODO: Delete this model
-class MatchRow(BaseModel):
-    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
-
-
-# TODO: delete this model
-class MatchRowIndividualScore(BaseModel):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
-    score = models.IntegerField()
-    row = models.ForeignKey(MatchRow, related_name="scores", on_delete=models.CASCADE, null=False)
-
-
 class Result(BaseModel):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
     score = models.IntegerField()
