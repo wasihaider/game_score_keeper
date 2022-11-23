@@ -110,6 +110,7 @@ export default function Stats() {
         console.log('query', query)
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${STATS}?${query}`)
             .then(res => {
+                console.log(res.data)
                 setStats(res.data)
             })
             .catch(e => console.log(e))
@@ -244,7 +245,7 @@ export default function Stats() {
                                            name, color, matches_total, points_total,
                                            scores_average, win, rating, position
                                        }) => (
-                                <TableRow key={name} sx={{bgcolor: alpha(color, 0.25)}}>
+                                <TableRow key={name} sx={{bgcolor: alpha(color, 0.2)}}>
                                     <TableCell sx={{borderBottom: 'none'}}>{position}</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{name}</TableCell>
                                     <TableCell sx={{borderBottom: 'none'}}>{matches_total}</TableCell>

@@ -10,6 +10,8 @@ services:
       - POSTGRES_DB=gsk
       - POSTGRES_USER=gsk
       - POSTGRES_PASSWORD=gskpostgres
+    ports:
+      - "5432:5432"
   pgadmin:
     image: dpage/pgadmin4
     container_name: gsk_db_admin
