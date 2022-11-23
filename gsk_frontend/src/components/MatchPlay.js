@@ -8,7 +8,6 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from '@mui/material/TableContainer';
-import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
 import axios from "axios";
 import {BASE_API_URL, GAME_ENDPOINT, NEW_MATCH, PLAYER_LIST_ENDPOINT} from "../constants";
