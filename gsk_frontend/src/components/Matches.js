@@ -275,7 +275,7 @@ export default function Matches() {
                             <Row key={row.id} row={row}/>
                         ))}
                         {emptyRows > 0 && (
-                            <TableRow strle={{height: 53 * emptyRows}}>
+                            <TableRow style={{height: 53 * emptyRows}}>
                                 <TableCell colSpan={6}/>
                             </TableRow>
                         )}
