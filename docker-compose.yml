@@ -5,7 +5,7 @@ services:
     image: postgres:14.5
     container_name: "gsk_db"
     volumes:
-      - database:/var/lib/postgresql/data
+      - ./database:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=gsk
       - POSTGRES_USER=gsk
