@@ -25,8 +25,6 @@ const generate_paths = () => {
     Array.from(Array(AVATAR_LIMIT), (e, i) => {
         images.push({name: i + 1, path: `${AVATAR_DIR_PATH}${i + 1}.png`})
     })
-    console.log(images)
-    // listReactFiles(__dirname).then(files => console.log(files))
     return images
 }
 
@@ -39,6 +37,7 @@ export default function ChooseAvatar({openDialog, setOpenDialog, clickAvatarHand
     }, [])
 
     const clickHandler = e => {
+        console.log(e.currentTarget.attributes.dataid.value)
         clickAvatarHandler(e.currentTarget.attributes.dataid.value)
         setOpenDialog(false)
     }

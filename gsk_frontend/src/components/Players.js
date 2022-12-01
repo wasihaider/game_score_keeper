@@ -5,7 +5,7 @@ import {Grid, IconButton, Avatar} from '@mui/material';
 import {AddRounded} from '@mui/icons-material'
 import ClickableAvatar from "../components/ClickableAvatar";
 import {useEffect, useState} from "react";
-import {BASE_API_URL, GAME_ENDPOINT, PLAYER_LIST_ENDPOINT} from "../constants";
+import {AVATAR_DIR_PATH, BASE_API_URL, GAME_ENDPOINT, PLAYER_LIST_ENDPOINT} from "../constants";
 import {randomColor} from "../utils";
 import PlayerForm from "./PlayerForm";
 
@@ -43,7 +43,10 @@ export default function Players() {
 
     useEffect(() => {
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${PLAYER_LIST_ENDPOINT}`)
-            .then(res => setPlayers(res.data))
+            .then(res => {
+                setPlayers(res.data)
+                console.log(res.data)
+            })
             .catch(e => {
                 console.log(e)
             })
@@ -73,7 +76,7 @@ export default function Players() {
                                     <IconButton onClick={handleClickPlayer} dataid={player.id}>
                                         <Avatar
                                             alt={player.name}
-                                            src={`/avatars/${player.id}.png`}
+                                            src={`${AVATAR_DIR_PATH}${player.avatar}.png`}
                                             sx={{width: 64, height: 64}}
                                         />
                                     </IconButton>
