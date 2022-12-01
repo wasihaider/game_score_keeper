@@ -1,0 +1,8 @@
+# Use firewall inbound rules to open ports on windows.
+
+# Get WSL IP
+bash.exe -c "ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'"
+
+# Port Forwarding
+netsh interface portproxy add v4tov4 listenport=3000 listenaddress=0.0.0.0 connectport=3000 connectaddress=<the_wsl_ip>
+
