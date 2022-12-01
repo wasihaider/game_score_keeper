@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Avatar, Grid, IconButton, Typography} from "@mui/material";
+import LazyLoad from "react-lazy-load";
+import {AppBar, Avatar, Button, Grid, IconButton, Slide, Toolbar, Typography} from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import {styled} from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
+import CloseIcon from '@mui/icons-material/Close';
+import {AVATAR_LIMIT, AVATAR_DIR_PATH} from "../constants";
 
 const StyledDialog = styled(Dialog)(({theme}) => ({
     '& .MuiDialog-paper': {
@@ -13,42 +16,71 @@ const StyledDialog = styled(Dialog)(({theme}) => ({
 }))
 
 
-export default function ChooseAvatar({state, handleClick}) {
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
-    const [images, setImages] = useState([])
+const generate_paths = () => {
+    let images = []
+    Array.from(Array(AVATAR_LIMIT), (e, i) => {
+        images.push({name: i + 1, path: `${AVATAR_DIR_PATH}${i + 1}.png`})
+    })
+    console.log(images)
+    // listReactFiles(__dirname).then(files => console.log(files))
+    return images
+}
 
-    // useEffect(() => {
-    //     const folder = '/avatars/'
-    //     const fs = require('fs')
-    //
-    //     fs.readdir(folder, (err, files) => {
-    //         files.forEach(file => {
-    //             console.log(file)
-    //         })
-    //     })
-    //
-    // }, [])
+const images = generate_paths()
+
+
+export default function ChooseAvatar({openDialog, setOpenDialog, clickAvatarHandler}) {
+
+    useEffect(() => {
+    }, [])
 
     const clickHandler = e => {
-        handleClick(e.currentTarget.attributes.dataid.value)
+        clickAvatarHandler(e.currentTarget.attributes.dataid.value)
+        setOpenDialog(false)
     }
 
     return (
         <div>
-            <StyledDialog open={state}>
-                <DialogTitle>Choose Avatar</DialogTitle>
+            <StyledDialog
+                open={openDialog}
+                fullScreen
+                TransitionComponent={Transition}
+                onClose={() => setOpenDialog(false)}
+            >
+                <DialogTitle>
+                    <AppBar sx={{position: 'relative'}}>
+                        <Toolbar>
+                            <Typography sx={{ml: 2, flex: 1}} variant="h6" component="div">
+                                Choose Avatar
+                            </Typography>
+                            <IconButton
+                                color="inherit"
+                                onClick={() => setOpenDialog(false)}
+                                aria-label="close"
+                            >
+                                <CloseIcon/>
+                            </IconButton>
+                        </Toolbar>
+                    </AppBar>
+                </DialogTitle>
                 <DialogContent>
-                    {
-                        images.map(({path, name}) => (
-                            <Grid container spacing={8} style={{display: 'flex', alignItems: 'center'}}>
-                                <Grid item xs={1} md={1}>
-                                    <IconButton onClick={clickHandler} dataid={name}>
-                                        <Avatar src={path} sx={{ width: 56, height: 56 }}/>
-                                    </IconButton>
+                    <Grid container spacing={2} style={{display: 'flex', alignItems: 'center'}}>
+                        {
+                            images.map(({path, name}) => (
+                                <Grid item xs={2} md={2} key={name}>
+                                    <LazyLoad offset={300} height={96} width={96} threshold={0.95}>
+                                        <IconButton onClick={clickHandler} dataid={name}>
+                                            <Avatar src={path} sx={{width: 96, height: 96}}/>
+                                        </IconButton>
+                                    </LazyLoad>
                                 </Grid>
-                            </Grid>
-                        ))
-                    }
+                            ))
+                        }
+                    </Grid>
                 </DialogContent>
             </StyledDialog>
         </div>

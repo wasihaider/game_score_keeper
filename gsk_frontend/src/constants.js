@@ -6,3 +6,5 @@ export const PLAYER_RU_ENDPOINT = "player/ru"
 export const MATCH_LIST_ENDPOINT = "matches"
 export const NEW_MATCH = "matches/new"
 export const STATS = "stats"
+export const AVATAR_DIR_PATH = "/avatars/"
+export const AVATAR_LIMIT = 2000

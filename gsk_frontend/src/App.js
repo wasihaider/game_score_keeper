@@ -9,6 +9,7 @@ import PlayerDetails from "./components/PlayerDetails";
 import PlayerStats from "./components/PlayerStats";
 import Player from "./pages/player";
 import Match from "./pages/Match";
+import ChooseAvatar from "./components/ChooseAvatar";
 
 
 class App extends Component {
@@ -28,6 +29,7 @@ class App extends Component {
                     <Route path='stats' element={<PlayerStats />} />
                 </Route>
                 <Route path='newMatch' element={<Match />} />
+                <Route path='choose' element={<ChooseAvatar />} />
             </Routes>
         )
     }

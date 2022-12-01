@@ -1,8 +1,8 @@
 import * as React from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom'
-import {Grid, Container} from '@mui/material';
-import {AddRounded, Poll, Scoreboard} from '@mui/icons-material'
+import {Grid} from '@mui/material';
+import {AddRounded} from '@mui/icons-material'
 import ClickableAvatar from "../components/ClickableAvatar";
 import {useEffect, useState} from "react";
 import {BASE_API_URL, GAME_ENDPOINT} from "../constants";

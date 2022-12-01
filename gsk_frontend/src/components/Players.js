@@ -1,13 +1,13 @@
 import * as React from 'react';
 import axios from 'axios';
 import {useNavigate, useParams} from 'react-router-dom'
-import {Grid, Container, IconButton, Avatar} from '@mui/material';
-import {AddRounded, Face} from '@mui/icons-material'
+import {Grid, IconButton, Avatar} from '@mui/material';
+import {AddRounded} from '@mui/icons-material'
 import ClickableAvatar from "../components/ClickableAvatar";
 import {useEffect, useState} from "react";
 import {BASE_API_URL, GAME_ENDPOINT, PLAYER_LIST_ENDPOINT} from "../constants";
-import GameFormDialogue from '../components/GameFormDialogue'
 import {randomColor} from "../utils";
+import PlayerForm from "./PlayerForm";
 
 
 export default function Players() {
@@ -17,11 +17,12 @@ export default function Players() {
     const [openDialogue, setOpenDialogue] = React.useState(false);
     const [playerName, setPlayerName] = useState("")
     const [playerColor, setPlayerColor] = useState(randomColor())
+    const [playerAvatar, setPlayerAvatar] = useState('')
     const navigate = useNavigate()
 
     const handleClickOpen = () => setOpenDialogue(true);
     const handleCancel = () => setOpenDialogue(false);
-    const handleGameInput = (e) => setPlayerName(e.target.value)
+    const handlePlayerNameInput = (e) => setPlayerName(e.target.value)
 
     const handleClickPlayer = e => {
         const data_id = e.currentTarget.attributes.dataid.value
@@ -32,6 +33,7 @@ export default function Players() {
         const player_data = {
             name: playerName,
             color: playerColor,
+            avatar: playerAvatar
         }
         axios.post(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${PLAYER_LIST_ENDPOINT}`, player_data)
             .then(res => setPlayers([...players, res.data]))
@@ -56,9 +58,10 @@ export default function Players() {
                         width: '56px', height: '56px'
                     }} isPlayer={true}/>
                 </Grid>
-                <GameFormDialogue handle_open={handleClickOpen} handle_cancel={handleCancel} state={openDialogue}
-                                  handle_game={handleGameInput} handle_add={handleClickNewPlayer}
-                                  title="Add new player" gameColor={playerColor} handleColorOnChange={
+                <PlayerForm handle_cancel={handleCancel} openDialog={openDialogue}
+                            handleName={handlePlayerNameInput} handle_add={handleClickNewPlayer}
+                            playerColor={playerColor} handleAvatar={avatar => setPlayerAvatar(avatar)}
+                            handleColorOnChange={
                     color => setPlayerColor(color)
                 }/>
                 {
@@ -71,7 +74,7 @@ export default function Players() {
                                         <Avatar
                                             alt={player.name}
                                             src={`/avatars/${player.id}.png`}
-                                            sx={{ width: 64, height: 64 }}
+                                            sx={{width: 64, height: 64}}
                                         />
                                     </IconButton>
                                     <span>{player.name}</span>
