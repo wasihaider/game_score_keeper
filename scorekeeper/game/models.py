@@ -36,6 +36,7 @@ class Player(BaseModel):
     win = models.PositiveIntegerField(default=0)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
     color = models.CharField(max_length=7, null=False)
+    avatar = models.CharField(max_length=250, null=False)
 
     def rank(self):
         count = Player.objects.filter(points_average__gt=self.points_average).count()

@@ -7,57 +7,23 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import {alpha} from "@mui/material/styles";
 import TableContainer from "@mui/material/TableContainer";
-import {Box, Card, CardContent, Grid, TextField, ToggleButton, ToggleButtonGroup, Typography} from "@mui/material";
+import {
+    Avatar,
+    Box,
+    Card,
+    CardContent,
+    Grid, Icon,
+    TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    Typography
+} from "@mui/material";
 import axios from "axios";
 import {BASE_API_URL, GAME_ENDPOINT, STATS} from "../constants";
 import dayjs from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import LinearProgressBar from "./LinearProgressBar";
 
-
-const stats = [
-    {
-        "name": "Wasi Haider",
-        "color": "#2f5f78",
-        "scores_total": 409700,
-        "points_total": 1304.0,
-        "scores_average": 628.3742331288344,
-        "points_average": 2.0,
-        "rating": 1000.0,
-        "position": 1
-    },
-    {
-        "name": "Ustaad",
-        "color": "#ec3737",
-        "scores_total": 325100,
-        "points_total": 954.3197712418347,
-        "scores_average": 499.38556067588326,
-        "points_average": 1.4659289880826953,
-        "rating": 732.9644940413476,
-        "position": 2
-    },
-    {
-        "name": "Zainab",
-        "color": "#fd00b3",
-        "scores_total": 245000,
-        "points_total": 609.0362511671296,
-        "scores_average": 376.3440860215054,
-        "points_average": 0.9355395563243158,
-        "rating": 467.76977816215793,
-        "position": 3
-    },
-    {
-        "name": "Maasi",
-        "color": "#44a79c",
-        "scores_total": 8400,
-        "points_total": 8.53249299719888,
-        "scores_average": 840.0,
-        "points_average": 0.8532492997198879,
-        "rating": 426.624649859944,
-        "position": 4
-    }
-]
 
 export default function Stats() {
 
@@ -107,12 +73,8 @@ export default function Stats() {
     };
 
     useEffect(() => {
-        console.log('query', query)
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${STATS}?${query}`)
-            .then(res => {
-                console.log(res.data)
-                setStats(res.data)
-            })
+            .then(res => setStats(res.data))
             .catch(e => console.log(e))
     }, [query])
 

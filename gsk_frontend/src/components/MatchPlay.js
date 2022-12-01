@@ -1,141 +1,171 @@
 import React, {useEffect, useState} from 'react';
-import {Fab, Grid, Typography} from "@mui/material";
-import CustomAppBar from "../components/CustomAppBar";
+import {Box, Button, Fab, Grid, IconButton, TextField, Typography} from "@mui/material";
+import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
-import TableContainer from '@mui/material/TableContainer';
-import Box from "@mui/material/Box";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 import axios from "axios";
-import {BASE_API_URL, GAME_ENDPOINT, NEW_MATCH, PLAYER_LIST_ENDPOINT} from "../constants";
-import AddIcon from "@mui/icons-material/Add";
-import ScoreDialog from "../components/ScoreDialog";
+import {BASE_API_URL, GAME_ENDPOINT, NEW_MATCH} from "../constants";
 
-
-function createData(id, data) {
-    return {
-        id,
-        data,
-    };
-}
-
-function getInitialState(players) {
+const initialTurnScore = (players) => {
     let score = {}
-    players.map(player => {
-        score[player.id] = ''
-    })
+    players.map(({id}) => score[id.toString()] = '')
     return score
 }
 
-export default function Match({players, endGame}) {
-    const [scoreRow, setScoreRow] = useState([])
-    const [openDialog, setOpenDialog] = useState(false)
-    const [turnScore, setTurnScore] = useState({})
-    const [totalScore, setTotalScore] = useState({})
+const row = (data, idx, players, handleRemove, startEditing, editingIdx, handleUpdate, stopEditing) => {
+    const currentlyEditing = editingIdx === idx
+    return (
+        <TableRow key={idx}>
+            <TableCell sx={{borderBottom: 'none'}}>{idx + 1}</TableCell>
+            {players.map(player => (
+                <TableCell sx={{borderBottom: 'none'}} key={player.id}>
+                    {currentlyEditing ?
+                        <TextField
+                            name={player.id.toString()}
+                            onChange={e => handleUpdate(e, player.id.toString(), idx)}
+                            value={data[player.id.toString()]}
+                            focused={true}
+                            size='small'
+                            color='secondary'
+                        /> :
+                        data[player.id.toString()]}
+                </TableCell>
+            ))}
+            <TableCell sx={{borderBottom: 'none'}}>
+                {currentlyEditing ?
+                    <IconButton color='secondary' onClick={stopEditing}><CheckIcon/></IconButton> :
+                    <IconButton color='secondary' onClick={() => startEditing(idx)}><EditIcon/></IconButton>
+                }
+            </TableCell>
+            <TableCell sx={{borderBottom: 'none'}}>
+                <IconButton color='secondary' onClick={() => handleRemove(idx)}><DeleteIcon/></IconButton>
+            </TableCell>
+        </TableRow>
+    )
+}
 
+export default function MatchPlay({players, endGame}) {
+
+    const [turnScore, setTurnScore] = useState(initialTurnScore(players))
+    const [tableData, setTableData] = useState([])
+    const [editIdx, setEditIdx] = useState(-1)
     const gameId = localStorage.getItem('gameId')
 
-    const handleOpenDialog = () => setOpenDialog(true);
-    const handleCancelDialog = () => setOpenDialog(false);
-    const handleScoreChange = (index, event) => {
-        let update = {}
-        update[index] = parseInt(event.target.value)
-        setTurnScore({...turnScore, ...update})
+    const handleRemove = (idx) => {
+        setTableData(prevState => prevState.filter((data, i) => idx !== i && data))
     }
 
-    const addScore = () => {
-        setTotalScore(() => {
-            let updated = {}
-            Object.keys(turnScore).map(key => {
-                updated[key] = totalScore[key] + turnScore[key]
-            })
-            return updated
+    const handleUpdate = (e, field, idx) => {
+        const {value} = e.target;
+        setTableData(prevState => prevState.map(
+            (row, i) => (idx === i ? {...row, [field]: value} : row)
+        ))
+    }
+
+    const startEditing = idx => setEditIdx(idx)
+    const stopEditing = () => setEditIdx(-1)
+
+
+    const handleFormChange = (e) => {
+        setTurnScore(prevState => {
+            return {...prevState, [e.target.name]: e.target.value}
         })
-        handleCancelDialog()
-        setTurnScore(getInitialState(players))
-        setScoreRow([...scoreRow, createData(scoreRow.length + 1, Object.values(turnScore))])
+    }
+
+    const handleTurnScoreSubmit = (e) => {
+        e.preventDefault()
+        setTableData([...tableData, turnScore])
+        setTurnScore(initialTurnScore(players))
     }
 
     const handleEndGame = () => {
-        let data = []
-        Object.keys(totalScore).map(key => {
-            data.push({"player": parseInt(key), "score": totalScore[key]})
+        let scores = []
+        players.map(({id}) => {
+            let score = {}
+            score.player = id
+            score.score = tableData.reduce((accumulator, object) => {
+                return accumulator + parseInt(object[id.toString()]);
+            }, 0);
+            scores.push(score)
         })
-        axios.post(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${NEW_MATCH}`, data)
+
+        axios.post(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${NEW_MATCH}`, scores)
             .then(res => {
                 endGame(res.data)
             })
             .catch(e => console.log(e))
     }
 
-
     useEffect(() => {
-        let scores = {}
-        players.map(player => {
-            scores[player.id] = 0
-        })
-        setTotalScore(scores)
-        setTurnScore(getInitialState(players))
+
     }, [])
 
     return (
         <>
-
-
-            <Box sx={{'& > :not(style)': {mx: 1, mb: 1}, display: 'flex'}}>
-                <Grid container spacing={2}>
-                    <Grid item sm={6} md={6}>
-                        <Fab color="secondary" variant='extended' aria-label="add" onClick={handleOpenDialog}>
-                            <AddIcon sx={{mr: 1}}/>
-                            Add Scores
-                        </Fab>
-                    </Grid>
-                    <Grid container item sm={6} md={6} direction='row-reverse'>
-                        <Fab color="secondary" variant='extended' aria-label="add" onClick={handleEndGame}>
-                            End Game
-                        </Fab>
-                    </Grid>
-                </Grid>
+            <Box sx={{flexGrow: 1, textAlign: 'right'}}>
+                <Fab sx={{mb: 2}} color="secondary" variant='extended' aria-label="add" onClick={handleEndGame}>
+                    End Game
+                </Fab>
             </Box>
-
+            <Box sx={{flexGrow: 1, textAlign: 'center', mb: 2}}>
+                <form onSubmit={handleTurnScoreSubmit}>
+                    <Grid container spacing={2} direction='row'>
+                        {
+                            players.map(player => (
+                                <Grid item key={player.id}>
+                                    <TextField
+                                        focused={true}
+                                        margin="dense"
+                                        id={player.id.toString()}
+                                        label={player.name}
+                                        variant="outlined"
+                                        color="secondary"
+                                        name={player.id.toString()}
+                                        value={turnScore[player.id.toString()]}
+                                        onChange={e => handleFormChange(e)}
+                                        size='small'
+                                        type='number'
+                                    />
+                                </Grid>
+                            ))
+                        }
+                    </Grid>
+                    <Button type='submit' color='secondary' variant='contained' sx={{mt: 2}}>Add Score</Button>
+                </form>
+            </Box>
             <TableContainer component={Paper}>
                 <Table aria-label="collapsible table" size='small'>
                     <TableHead>
                         <TableRow>
                             <TableCell><Typography variant='h6'>Turn</Typography></TableCell>
                             {
-                                players.map(player => <TableCell key={player.id}>
-                                    <Typography variant='h6'>{player.name}</Typography>
-                                </TableCell>)
+                                players.map(player => (
+                                    <TableCell key={player.id}>
+                                        <Typography variant='h6'>{player.name}</Typography>
+                                    </TableCell>
+                                ))
                             }
+                            <TableCell/>
+                            <TableCell/>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
-                            scoreRow.map(row => (
-                                <TableRow key={row.id}>
-                                    <TableCell component="th" scope="row" sx={{borderBottom: 'none'}}>
-                                        {row.id}
-                                    </TableCell>
-                                    {
-                                        row.data.map(
-                                            (score, scoreId) => <TableCell key={scoreId}
-                                                                           sx={{borderBottom: 'none'}}>{score}</TableCell>)
-                                    }
-                                </TableRow>
+                            tableData.map((data, idx) => row(
+                                data, idx, players,
+                                handleRemove, startEditing, editIdx, handleUpdate, stopEditing
                             ))
                         }
                     </TableBody>
                 </Table>
             </TableContainer>
-
-
-            <ScoreDialog state={openDialog} handleCancel={handleCancelDialog}
-                         handleAdd={addScore} dialogTitle='Add Scores' players={players}
-                         handleScoreChange={handleScoreChange}/>
         </>
     )
 }

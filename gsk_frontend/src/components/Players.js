@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios from 'axios';
 import {useNavigate, useParams} from 'react-router-dom'
-import {Grid, Container} from '@mui/material';
+import {Grid, Container, IconButton, Avatar} from '@mui/material';
 import {AddRounded, Face} from '@mui/icons-material'
 import ClickableAvatar from "../components/ClickableAvatar";
 import {useEffect, useState} from "react";
@@ -24,7 +24,7 @@ export default function Players() {
     const handleGameInput = (e) => setPlayerName(e.target.value)
 
     const handleClickPlayer = e => {
-        const data_id = e.target.attributes.dataid.value
+        const data_id = e.currentTarget.attributes.dataid.value
         navigate(`/player/${data_id}`)
     }
 
@@ -41,9 +41,7 @@ export default function Players() {
 
     useEffect(() => {
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${gameId}/${PLAYER_LIST_ENDPOINT}`)
-            .then(res => {
-                setPlayers(res.data)
-            })
+            .then(res => setPlayers(res.data))
             .catch(e => {
                 console.log(e)
             })
@@ -53,7 +51,7 @@ export default function Players() {
         <div className='center-container'>
             <Grid container spacing={8}
                   className={players.length <= 5 ? 'center-grid-container' : 'left-grid-container'}>
-                <Grid item xs={3} md={2} key={0} className={'no-padding-grid-item'}>
+                <Grid item xs={3} md={2} key={0} sx={{my: 2}} className={'no-padding-grid-item'}>
                     <ClickableAvatar name='New Player' avatar={<AddRounded/>} click_handler={handleClickOpen} sx={{
                         width: '56px', height: '56px'
                     }} isPlayer={true}/>
@@ -66,10 +64,18 @@ export default function Players() {
                 {
                     players.map(player => {
                         return (
-                            <Grid item container xs={3} md={2} key={player.id} className={'no-padding-grid-item'}>
-                                <ClickableAvatar name={player.name} avatar={<Face dataid={player.id}/>} sx={{
-                                    width: '56px', height: '56px', bgcolor: player.color
-                                }} click_handler={handleClickPlayer} data_id={player.id} isPlayer={true}/>
+                            <Grid item container xs={3} md={2} sx={{my: 2}} key={player.id}
+                                  className={'no-padding-grid-item'}>
+                                <Grid container direction='column' style={{display: 'flex', alignItems: 'center'}}>
+                                    <IconButton onClick={handleClickPlayer} dataid={player.id}>
+                                        <Avatar
+                                            alt={player.name}
+                                            src={`/avatars/${player.id}.png`}
+                                            sx={{ width: 64, height: 64 }}
+                                        />
+                                    </IconButton>
+                                    <span>{player.name}</span>
+                                </Grid>
                             </Grid>
                         )
                     })

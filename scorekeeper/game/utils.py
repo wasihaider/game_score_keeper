@@ -6,4 +6,3 @@ def calculate_points(score, position, total_players, highest_score):
 
 def parse_player_scores(data):
     results = sorted(data, key=lambda x: x['score'], reverse=True)
-
