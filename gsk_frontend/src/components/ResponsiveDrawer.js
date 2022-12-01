@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import CustomAppBar from "../components/CustomAppBar";
 import GameDrawerListItems from "../components/GameDrawerListItems";
 
 const drawerWidth = 240;
@@ -23,10 +22,6 @@ function ResponsiveDrawer(props) {
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <CustomAppBar drawer={true} drawer_handler={handleDrawerToggle} custom_sx={{
-                width: {sm: `calc(100% - ${drawerWidth}px)`},
-                ml: {sm: `${drawerWidth}px`}
-            }}/>
             <Box
                 component="nav"
                 sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}
@@ -63,7 +58,7 @@ function ResponsiveDrawer(props) {
                 component="main"
                 sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${drawerWidth}px)`}}}
             >
-                <Toolbar/>
+                {/*<Toolbar/>*/}
                 <Outlet />
             </Box>
         </Box>

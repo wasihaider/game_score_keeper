@@ -29,7 +29,6 @@ class App extends Component {
                     <Route path='stats' element={<PlayerStats />} />
                 </Route>
                 <Route path='newMatch' element={<Match />} />
-                <Route path='choose' element={<ChooseAvatar />} />
             </Routes>
         )
     }

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import {Grid, Typography, Box, CardContent, Card} from "@mui/material";
+import {Grid, Typography, Box, CardContent, Card, Avatar, IconButton} from "@mui/material";
 import {alpha} from '@mui/material/styles'
 import LinearProgressBar from "./LinearProgressBar";
-import {BASE_API_URL, GAME_ENDPOINT, PLAYER_DETAIL_ENDPOINT} from "../constants";
+import {AVATAR_DIR_PATH, BASE_API_URL, GAME_ENDPOINT, PLAYER_DETAIL_ENDPOINT} from "../constants";
 import {useParams} from "react-router-dom";
 
 export default function PlayerStats() {
@@ -22,10 +22,25 @@ export default function PlayerStats() {
     return (
         <Box sx={{flexGrow: 1}}>
             <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={12}>
                     <Card raised sx={{backgroundColor: alpha(player.color, 0.1), pb: 0}}>
                         <CardContent color={player.color}>
-                            <Typography variant="h5" color={player.color}>{player.name}</Typography>
+                            <Grid container spacing={0}>
+                                <Grid item xs={6} md={6}>
+                                    <Box sx={{flexGrow: 1, m: 'auto', textAlign: 'left', alignItems: 'center'}}>
+                                        <Typography variant='h4' color={player.color}>{player.name}</Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <Box sx={{flexGrow: 1, m: 'auto', textAlign: 'right'}}>
+                                        <IconButton>
+                                            <Avatar src={`${AVATAR_DIR_PATH}${player.avatar}.png`} sx={{
+                                                height: 96, width: 96
+                                            }}/>
+                                        </IconButton>
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -73,7 +88,8 @@ export default function PlayerStats() {
                                     <Typography variant='body1' color={player.color}>{player.win}</Typography>
                                 </Grid>
                             </Grid>
-                            <LinearProgressBar customColor={player.color} value={player.win / player.total_matches * 100}/>
+                            <LinearProgressBar customColor={player.color}
+                                               value={player.win / player.total_matches * 100}/>
                         </CardContent>
                     </Card>
                 </Grid>
