@@ -57,8 +57,10 @@ export default function Players() {
             <Grid container spacing={8}
                   className={players.length <= 5 ? 'center-grid-container' : 'left-grid-container'}>
                 <Grid item xs={3} md={2} key={0} sx={{my: 2}} className={'no-padding-grid-item'}>
-                    <ClickableAvatar name='New Player' avatar={<AddRounded/>} click_handler={handleClickOpen} sx={{
-                        width: '56px', height: '56px'
+                    <ClickableAvatar name='New Player' avatar={<AddRounded sx={{
+                        width: 84, height: 84
+                    }}/>} click_handler={handleClickOpen} sx={{
+                        width: '96px', height: '96px'
                     }} isPlayer={true}/>
                 </Grid>
                 <PlayerForm handle_cancel={handleCancel} openDialog={openDialogue}
@@ -77,10 +79,10 @@ export default function Players() {
                                         <Avatar
                                             alt={player.name}
                                             src={`${AVATAR_DIR_PATH}${player.avatar}.png`}
-                                            sx={{width: 64, height: 64}}
+                                            sx={{width: 96, height: 96}}
                                         />
                                     </IconButton>
-                                    <span>{player.name}</span>
+                                    <span style={{ fontSize: 18 }}>{player.name}</span>
                                 </Grid>
                             </Grid>
                         )

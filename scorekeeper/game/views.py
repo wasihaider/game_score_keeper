@@ -116,7 +116,7 @@ class GameStatsView(generics.ListAPIView):
             .annotate(matches_total=Count('score'), points_total=Sum('points'),
                       scores_average=Avg('score'), points_average=Avg('points'),
                       name=F('player__name'), color=F('player__color'),
-                      matches=Count('score'),
+                      avatar=F('player__avatar'), matches=Count('score'),
                       win=Count(Case(When(position=1, then=1), output_field=IntegerField()))) \
             .annotate(rating=F('points_average') * 500) \
             .order_by('-rating')

@@ -12,14 +12,14 @@ import {
     Box,
     Card,
     CardContent,
-    Grid, Icon,
+    Grid, Icon, IconButton,
     TextField,
     ToggleButton,
     ToggleButtonGroup,
     Typography
 } from "@mui/material";
 import axios from "axios";
-import {BASE_API_URL, GAME_ENDPOINT, STATS} from "../constants";
+import {AVATAR_DIR_PATH, BASE_API_URL, GAME_ENDPOINT, STATS} from "../constants";
 import dayjs from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
@@ -80,7 +80,7 @@ export default function Stats() {
 
     return (
         <>
-            <Box sx={{flexGrow: 1, textAlign: 'center', mb: 1}}>
+            <Box sx={{flexGrow: 1, textAlign: 'center', mb: 2}}>
                 <ToggleButtonGroup
                     color='secondary'
                     value={period}
@@ -98,7 +98,7 @@ export default function Stats() {
             </Box>
             {
                 showDatePicker && (
-                    <Box sx={{flexGrow: 1, textAlign: 'center', mb: 1, mt: 2}}>
+                    <Box sx={{flexGrow: 1, textAlign: 'center', mb: 2, mt: 2}}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
                                 onChange={(value) => handleDateChange('start', value)}
@@ -155,7 +155,7 @@ export default function Stats() {
             <Box sx={{flexGrow: 1}}>
                 <Grid container spacing={2}>
                     {
-                        stats.slice(0, 3).map(({color, name, position, rating, win, matches_total}) => (
+                        stats.slice(0, 3).map(({color, name, position, rating, avatar}) => (
                             <Grid item xs={4} md={4} key={name}>
                                 <Card raised
                                       sx={{
@@ -165,17 +165,31 @@ export default function Stats() {
                                           maxHeight: '23vh'
                                       }}>
                                     <CardContent>
-                                        <Typography variant="h6">{name}</Typography>
-                                        <Typography variant="h4">{position}</Typography>
-                                        <Grid container direction='row' spacing={1}>
-                                            <Grid item>
-                                                <Typography variant='caption' color={color}>Rating: </Typography>
+                                        <Grid container spacing={0}>
+                                            <Grid item xs={6} md={6}>
+                                                <Typography variant="h6" color={color}>{name}</Typography>
+                                                <Typography variant="h4" color={color}>{position}</Typography>
+                                                <Grid container direction='row' spacing={1}>
+                                                    <Grid item>
+                                                        <Typography variant='caption'
+                                                                    color={color}>Rating: </Typography>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <Typography variant='body1'
+                                                                    color={color}>{
+                                                            Math.round((rating + Number.EPSILON) * 100) / 100
+                                                        }</Typography>
+                                                    </Grid>
+                                                </Grid>
                                             </Grid>
-                                            <Grid item>
-                                                <Typography variant='body1'
-                                                            color={color}>{
-                                                    Math.round((rating + Number.EPSILON) * 100) / 100
-                                                }</Typography>
+                                            <Grid item xs={6} md={6}>
+                                                <Box sx={{flexGrow: 1, m: 'auto', textAlign: 'right'}}>
+                                                    <IconButton>
+                                                        <Avatar src={`${AVATAR_DIR_PATH}${avatar}.png`} sx={{
+                                                            height: 84, width: 84
+                                                        }}/>
+                                                    </IconButton>
+                                                </Box>
                                             </Grid>
                                         </Grid>
                                     </CardContent>
@@ -185,40 +199,45 @@ export default function Stats() {
                     }
                 </Grid>
             </Box>
-            <Grid item xs={12} sx={{m: 1}}>
-                <Typography variant='h6'>Table</Typography>
+            <Grid item xs={12} sx={{m: 1, mt: 2}}>
+                <Typography variant='h5'>Table</Typography>
             </Grid>
             <TableContainer component={Paper}>
                 <Table aria-label="collapsible table" size='small'>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Position</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Matches</TableCell>
-                            <TableCell>Win</TableCell>
-                            <TableCell>Average</TableCell>
-                            <TableCell>Points</TableCell>
-                            <TableCell>Rating</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Position</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Name</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Matches</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Win</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Average</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Points</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Rating</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
                             stats.map(({
                                            name, color, matches_total, points_total,
-                                           scores_average, win, rating, position
+                                           scores_average, win, rating, position, avatar
                                        }) => (
                                 <TableRow key={name} sx={{bgcolor: alpha(color, 0.2)}}>
-                                    <TableCell sx={{borderBottom: 'none'}}>{position}</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{name}</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{matches_total}</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{win}</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{
+                                    <TableCell sx={{borderBottom: 'none', fontSize: 18}}>{position}</TableCell>
+                                    <TableCell sx={{borderBottom: 'none', fontSize: 18}}>
+                                        <Grid container>
+                                            <Avatar src={`${AVATAR_DIR_PATH}${avatar}.png`} />
+                                            <Typography variant='body' fontSize={18} sx={{ ml: 1, mt: 1 }}>{name}</Typography>
+                                        </Grid>
+                                    </TableCell>
+                                    <TableCell sx={{borderBottom: 'none', fontSize: 18}}>{matches_total}</TableCell>
+                                    <TableCell sx={{borderBottom: 'none', fontSize: 18}}>{win}</TableCell>
+                                    <TableCell sx={{borderBottom: 'none', fontSize: 18}}>{
                                         Math.round((scores_average + Number.EPSILON) * 100) / 100
                                     }</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{
+                                    <TableCell sx={{borderBottom: 'none', fontSize: 18}}>{
                                         Math.round((points_total + Number.EPSILON) * 100) / 100
                                     }</TableCell>
-                                    <TableCell sx={{borderBottom: 'none'}}>{
+                                    <TableCell sx={{borderBottom: 'none', fontSize: 18}}>{
                                         Math.round((rating + Number.EPSILON) * 100) / 100
                                     }</TableCell>
                                 </TableRow>
