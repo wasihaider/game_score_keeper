@@ -12,7 +12,7 @@ import {
     Box,
     Card,
     CardContent,
-    Grid, Icon, IconButton,
+    Grid, IconButton,
     TextField,
     ToggleButton,
     ToggleButtonGroup,
@@ -222,7 +222,7 @@ export default function Stats() {
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ fontSize: 14 }}>Position</TableCell>
-                            <TableCell sx={{ fontSize: 14 }}>Name</TableCell>
+                            <TableCell sx={{ fontSize: 14 }}>Player</TableCell>
                             <TableCell sx={{ fontSize: 14 }}>Matches</TableCell>
                             <TableCell sx={{ fontSize: 14 }}>Win</TableCell>
                             <TableCell sx={{ fontSize: 14 }}>Average</TableCell>

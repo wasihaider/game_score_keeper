@@ -193,10 +193,11 @@ export default function Matches() {
             .then(res => {
                 setRows(res.data.results.map(match => {
                     const d = new Date(match.created_on);
-                    return createData(match.id, d.toLocaleString(), match.results);
+                    const day = dayjs(d.toLocaleString()).format("ddd, MMM D, YYYY");
+                    return createData(match.id, day, match.results);
                 }))
                 setRowCount(res.data.count)
-                console.log(res.data)
+                console.log("data", res.data)
             })
             .catch(e => console.log(e))
     }, [startDate, endDate, page])

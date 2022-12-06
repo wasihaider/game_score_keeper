@@ -39,25 +39,18 @@ class PlayerSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created_on", "modified_on", "score_average", "points_average", "rating")
 
 
-class ResultSerializer(serializers.ModelSerializer):
+class MatchResultSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="player.name", read_only=True)
     color = serializers.CharField(source="player.color", read_only=True)
-    avatar = serializers.CharField(source="player.avatar", read_only=True)
 
     class Meta:
         model = Result
-        fields = "__all__"
-        read_only_fields = ("id", "created_on", "modified_on", "name", "color", "avatar", "match")
-
-
-class GameMatchListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Match
-        fields = ("id", "created_on")
+        exclude = ("match",)
+        read_only_fields = ("id", "created_on", "modified_on", "name", "color")
 
 
 class GameMatchSerializer(serializers.ModelSerializer):
-    results = ResultSerializer(many=True)
+    results = MatchResultSerializer(many=True)
 
     def create(self, validated_data):
         results = validated_data.pop("results")
@@ -106,3 +99,25 @@ class GameStatSerializer(serializers.ModelSerializer):
         fields = (
             "name", "color", "avatar", "points_total", "scores_average", "rating", "position", "matches_total", "win"
         )
+
+
+class ResultSerializerScore(serializers.ModelSerializer):
+    name = serializers.CharField(source="player.name", read_only=True)
+    color = serializers.CharField(source="player.color", read_only=True)
+    avatar = serializers.CharField(source="player.avatar", read_only=True)
+    date = serializers.DateTimeField(source="created_on", read_only=True)
+
+    class Meta:
+        model = Result
+        fields = ("id", "date", "name", "color", "avatar", "score")
+
+
+class ResultTotalScoreAverageSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(read_only=True)
+    color = serializers.CharField(read_only=True)
+    avatar = serializers.CharField(read_only=True)
+    score_average = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Result
+        fields = ("name", "color", "avatar", "score_average")
