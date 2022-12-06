@@ -30,12 +30,12 @@ export default function Stats() {
     const [stats, setStats] = useState([])
     const gameId = localStorage.getItem('gameId')
 
-    const [period, setPeriod] = useState('30')
-    const [startDate, setStartDate] = React.useState(dayjs().subtract(1, 'month').format('YYYY-MM-DD'))
+    const [period, setPeriod] = useState('-3')
+    const [startDate, setStartDate] = React.useState(dayjs().startOf('month').format('YYYY-MM-DD'))
     const [endDate, setEndDate] = React.useState(dayjs().format('YYYY-MM-DD'))
     const [showDatePicker, setShowPicker] = useState(false)
     const [query, setQuery] = useState(`start_date=${
-        dayjs().subtract(1, 'month').format('YYYY-MM-DD')
+        dayjs().startOf('month').format('YYYY-MM-DD')
     }&end_date=${
         dayjs().format('YYYY-MM-DD')
     }`)
@@ -52,7 +52,7 @@ export default function Stats() {
     }
 
     const handleTogglePeriod = (event, newPeriod) => {
-        setShowPicker(newPeriod === '-2');
+        setShowPicker(newPeriod === '-2');  // Select Date
         setPeriod(newPeriod);
         const end = dayjs().format('YYYY-MM-DD')
         if (newPeriod === '7') {
@@ -65,10 +65,15 @@ export default function Stats() {
             setStartDate(start)
             setEndDate(end)
             setQuery(`start_date=${start}&end_date=${end}`)
-        } else if (newPeriod === '-1') {
+        } else if (newPeriod === '-1') {  //All times
             setStartDate('')
             setEndDate(end)
             setQuery('')
+        } else if (newPeriod === '-3') {  // This month only
+            const start = dayjs().startOf('month').format('YYYY-MM-DD')
+            setStartDate(start)
+            setEndDate(end)
+            setQuery(`start_date=${start}&end_date=${end}`)
         }
     };
 
@@ -88,11 +93,21 @@ export default function Stats() {
                     onChange={handleTogglePeriod}
                     aria-label='Periods'
                 >
-                    <ToggleButton value='-1' selected={period === '-1'} sx={{color: '#bdbdbd'}}>All times</ToggleButton>
-                    <ToggleButton value='7' selected={period === '7'} sx={{color: '#bdbdbd'}}>7 days</ToggleButton>
-                    <ToggleButton value='30' selected={period === '30'} sx={{color: '#bdbdbd'}}>Last
-                        Month</ToggleButton>
-                    <ToggleButton value='-2' selected={period === '-2'} sx={{color: '#bdbdbd'}}>Select
+                    <ToggleButton value='7' selected={period === '7'} sx={{
+                        color: period === '7' ? '#bdbdbd': '#585858'
+                    }}>7 days</ToggleButton>
+                    <ToggleButton value='30' selected={period === '30'} sx={{
+                        color: period === '30' ? '#bdbdbd': '#585858'
+                    }}>30 days</ToggleButton>
+                    <ToggleButton value='-3' selected={period === '-3'} sx={{
+                        color: period === '-3' ? '#bdbdbd': '#585858'
+                    }}>This month</ToggleButton>
+                    <ToggleButton value='-1' selected={period === '-1'} sx={{
+                        color: period === '-1' ? '#bdbdbd': '#585858'
+                    }}>All times</ToggleButton>
+                    <ToggleButton value='-2' selected={period === '-2'} sx={{
+                        color: period === '-2' ? '#bdbdbd': '#585858'
+                    }}>Select
                         Period</ToggleButton>
                 </ToggleButtonGroup>
             </Box>

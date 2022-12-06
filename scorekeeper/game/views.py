@@ -4,9 +4,9 @@ import math
 from .utils import calculate_points
 from .models import Game, Player, Match, Result
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
-                          GameStatSerializer)
+                          GameStatSerializer, ResultSerializer)
 from .filters import GameStatsFilterSet, MatchFilterSet
-from .pagination import MatchListPagination
+from .pagination import MatchListPagination, ResultListPagination
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -140,3 +140,15 @@ class GameStatsView(generics.ListAPIView):
             d['rating'] = math.ceil(d['rating'])
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class ResultListView(generics.ListAPIView):
+    serializer_class = ResultSerializer
+    queryset = Result.objects.all()
+    filter_backends = [drf_filters.DjangoFilterBackend, filters.OrderingFilter]
+    pagination_class = ResultListPagination
+    filterset_class = GameStatsFilterSet
+    ordering_fields = "__all__"
+
+    def get_queryset(self):
+        return self.queryset.filter(match__game__id=self.kwargs['game_id'])

@@ -9,7 +9,7 @@ import PlayerDetails from "./components/PlayerDetails";
 import PlayerStats from "./components/PlayerStats";
 import Player from "./pages/player";
 import Match from "./pages/Match";
-import ChooseAvatar from "./components/ChooseAvatar";
+import Records from "./components/Records";
 
 
 class App extends Component {
@@ -22,6 +22,7 @@ class App extends Component {
                     <Route path='players' element={<Players />}/>
                     <Route path='matches' element={<Matches />}/>
                     <Route path='stats' element={<Stats />}/>
+                    <Route path='records' element={<Records />} />
                 </Route>
                 <Route path='player/:playerId' element={<Player />}>
                     <Route index element={<PlayerStats />} />
