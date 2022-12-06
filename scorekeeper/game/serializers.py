@@ -116,8 +116,46 @@ class ResultTotalScoreAverageSerializer(serializers.ModelSerializer):
     name = serializers.CharField(read_only=True)
     color = serializers.CharField(read_only=True)
     avatar = serializers.CharField(read_only=True)
-    score_average = serializers.CharField(read_only=True)
+    match_played = serializers.IntegerField(read_only=True)
+    score_average = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Result
-        fields = ("name", "color", "avatar", "score_average")
+        fields = ("name", "color", "avatar", "score_average", "match_played")
+        
+
+class ResultTotalScoreSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(read_only=True)
+    color = serializers.CharField(read_only=True)
+    avatar = serializers.CharField(read_only=True)
+    match_played = serializers.IntegerField(read_only=True)
+    total_score = serializers.IntegerField(read_only=True)
+    
+    class Meta:
+        model = Result
+        fields = ("name", "color", "avatar", "total_score", "match_played")
+        
+
+class ResultMostWinSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(read_only=True)
+    color = serializers.CharField(read_only=True)
+    avatar = serializers.CharField(read_only=True)
+    match_played = serializers.IntegerField(read_only=True)
+    win = serializers.IntegerField(read_only=True)
+    
+    class Meta:
+        model = Result
+        fields = ("name", "color", "avatar", "match_played", "win")
+        
+
+class ResultMostWinPercentageSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(read_only=True)
+    color = serializers.CharField(read_only=True)
+    avatar = serializers.CharField(read_only=True)
+    match_played = serializers.IntegerField(read_only=True)
+    win_percentage = serializers.FloatField(read_only=True)
+    
+    class Meta:
+        model = Result
+        fields = ("name", "color", "avatar", "match_played", "win_percentage")
+    

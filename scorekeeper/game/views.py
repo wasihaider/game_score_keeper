@@ -4,7 +4,8 @@ import math
 from .utils import calculate_points
 from .models import Game, Player, Match, Result
 from .serializers import (GameSerializer, PlayerSerializer, GamePlayerSerializer, GameMatchSerializer,
-                          GameStatSerializer, ResultSerializerScore, ResultTotalScoreAverageSerializer)
+                          GameStatSerializer, ResultSerializerScore, ResultTotalScoreAverageSerializer,
+                          ResultTotalScoreSerializer, ResultMostWinSerializer, ResultMostWinPercentageSerializer)
 from .filters import GameStatsFilterSet, MatchFilterSet
 from .pagination import MatchListPagination, ResultListPagination
 from rest_framework import generics, status
@@ -20,6 +21,9 @@ logger = logging.getLogger(__name__)
 RECORD_SERIALIZER_MAPPING = {
 	'score': ResultSerializerScore,
 	'scoreAverage': ResultTotalScoreAverageSerializer,
+	'scoreTotal': ResultTotalScoreSerializer,
+	'win': ResultMostWinSerializer,
+	'winPercentage': ResultMostWinPercentageSerializer,
 }
 
 
@@ -168,10 +172,28 @@ class ResultListView(generics.ListAPIView):
 		if filter == 'scoreAverage':
 			return queryset.values('player') \
 				.annotate(score_average=Avg('score'), name=F('player__name'), color=F('player__color'),
-			              avatar=F('player__avatar')) \
+			              avatar=F('player__avatar'), match_played=Count('match')) \
 				.order_by('-score_average')
 		elif filter == 'score':
 			return queryset.order_by("-score")
+		elif filter == 'scoreTotal':
+			return queryset.values('player') \
+				.annotate(total_score=Sum('score'), name=F('player__name'), color=F('player__color'),
+			              avatar=F('player__avatar'), match_played=Count('match')) \
+				.order_by('-total_score')
+		elif filter == 'win':
+			return queryset.values('player') \
+				.annotate(win=Count(Case(When(position=1, then=1), output_field=IntegerField())),
+			              name=F('player__name'), color=F('player__color'),
+			              avatar=F('player__avatar'), match_played=Count('match')) \
+				.order_by('-win')
+		elif filter == 'winPercentage':
+			return queryset.values('player') \
+				.annotate(win=Count(Case(When(position=1, then=1), output_field=IntegerField())),
+			              name=F('player__name'), color=F('player__color'),
+			              avatar=F('player__avatar'), match_played=Count('match')) \
+				.annotate(win_percentage=F('win') / F('match_played')) \
+				.order_by('-win')
 		else:
 			return queryset
 	
