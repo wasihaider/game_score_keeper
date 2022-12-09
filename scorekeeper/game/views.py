@@ -11,7 +11,7 @@ from .pagination import MatchListPagination, ResultListPagination
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from django.db.models import Sum, Avg, F, Count, Case, When, IntegerField
+from django.db.models import Sum, Avg, F, Count, Case, When, IntegerField, DecimalField, ExpressionWrapper
 from django_filters import rest_framework as drf_filters
 from rest_framework import filters
 from rest_framework.views import APIView
@@ -192,7 +192,8 @@ class ResultListView(generics.ListAPIView):
 				.annotate(win=Count(Case(When(position=1, then=1), output_field=IntegerField())),
 			              name=F('player__name'), color=F('player__color'),
 			              avatar=F('player__avatar'), match_played=Count('match')) \
-				.annotate(win_percentage=F('win') / F('match_played')) \
+				.annotate(win_percentage=ExpressionWrapper(
+					F('win') * 100 / F('match_played'), output_field=DecimalField())) \
 				.order_by('-win')
 		else:
 			return queryset

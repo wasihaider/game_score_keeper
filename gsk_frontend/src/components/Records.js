@@ -46,9 +46,31 @@ const pageData = {
     scoreAverage: {
         title: "Highest Score Average",
         columns: [
+            {field: 'match_played', label: "Match Played", type: 'int'},
             {field: 'score_average', label: "Score Average", type: 'float'}
         ]
-    }
+    },
+    scoreTotal: {
+        title: "Highest Total Score",
+        columns: [
+            {field: 'match_played', label: "Match Played", type: 'int'},
+            {field: 'total_score', label: "Score", type: 'int'}
+        ]
+    },
+    win: {
+        title: "Most wins",
+        columns: [
+            {field: 'match_played', label: "Match Played", type: 'int'},
+            {field: 'win', label: "Win", type: 'int'}
+        ]
+    },
+    winPercentage: {
+        title: "Highest win percentage",
+        columns: [
+            {field: 'match_played', label: "Match Played", type: 'int'},
+            {field: 'win_percentage', label: "Percentage", type: 'float'}
+        ]
+    },
 }
 
 
@@ -60,8 +82,6 @@ function getHumanDate(date) {
 
 
 function RecordTable({columns, records}) {
-
-    console.log("records", records)
 
     return (
         <TableContainer component={Paper}>
