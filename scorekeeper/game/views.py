@@ -14,7 +14,6 @@ from rest_framework.response import Response
 from django.db.models import Sum, Avg, F, Count, Case, When, IntegerField, DecimalField, ExpressionWrapper
 from django_filters import rest_framework as drf_filters
 from rest_framework import filters
-from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +119,8 @@ class GameStatsView(generics.ListAPIView):
 	def get_queryset(self):
 		return self.queryset.filter(match__game__id=self.kwargs['game_id'])
 	
-	def get_aggregated_queryset(self, queryset):
+	@staticmethod
+	def get_aggregated_queryset(queryset):
 		return queryset.values('player') \
 			.annotate(matches_total=Count('score'), points_total=Sum('points'),
 		              scores_average=Avg('score'), points_average=Avg('points'),
@@ -167,27 +167,28 @@ class ResultListView(generics.ListAPIView):
 		serializer_class = RECORD_SERIALIZER_MAPPING[filter_name]
 		kwargs.setdefault('context', self.get_serializer_context())
 		return serializer_class(*args, **kwargs)
-	
-	def get_aggregated_queryset(self, queryset, filter):
-		if filter == 'scoreAverage':
+
+	@staticmethod
+	def get_aggregated_queryset(queryset, filter_name):
+		if filter_name == 'scoreAverage':
 			return queryset.values('player') \
 				.annotate(score_average=Avg('score'), name=F('player__name'), color=F('player__color'),
 			              avatar=F('player__avatar'), match_played=Count('match')) \
 				.order_by('-score_average')
-		elif filter == 'score':
+		elif filter_name == 'score':
 			return queryset.order_by("-score")
-		elif filter == 'scoreTotal':
+		elif filter_name == 'scoreTotal':
 			return queryset.values('player') \
 				.annotate(total_score=Sum('score'), name=F('player__name'), color=F('player__color'),
 			              avatar=F('player__avatar'), match_played=Count('match')) \
 				.order_by('-total_score')
-		elif filter == 'win':
+		elif filter_name == 'win':
 			return queryset.values('player') \
 				.annotate(win=Count(Case(When(position=1, then=1), output_field=IntegerField())),
 			              name=F('player__name'), color=F('player__color'),
 			              avatar=F('player__avatar'), match_played=Count('match')) \
 				.order_by('-win')
-		elif filter == 'winPercentage':
+		elif filter_name == 'winPercentage':
 			return queryset.values('player') \
 				.annotate(win=Count(Case(When(position=1, then=1), output_field=IntegerField())),
 			              name=F('player__name'), color=F('player__color'),
