@@ -195,7 +195,7 @@ class ResultListView(generics.ListAPIView):
 			              avatar=F('player__avatar'), match_played=Count('match')) \
 				.annotate(win_percentage=ExpressionWrapper(
 					F('win') * 100 / F('match_played'), output_field=DecimalField())) \
-				.order_by('-win')
+				.order_by('-win_percentage')
 		else:
 			return queryset
 	
