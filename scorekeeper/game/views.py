@@ -143,10 +143,10 @@ class GameStatsView(generics.ListAPIView):
 		
 		position = 1
 		for idx, d in enumerate(data):
+			d['rating'] = math.ceil(d['rating'])
 			if idx != 0 and data[idx - 1]['rating'] != d['rating']:
 				position += 1
 			d['position'] = position
-			d['rating'] = math.ceil(d['rating'])
 		
 		return Response(data, status=status.HTTP_200_OK)
 

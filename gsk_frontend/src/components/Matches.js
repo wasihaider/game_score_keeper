@@ -172,19 +172,12 @@ export default function Matches() {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [rowCount, setRowCount] = React.useState(0);
 
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+    const handleChangePage = (event, newPage) => setPage(newPage);
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
 
     useEffect(() => {
         const query = `ordering=-created_on&start_date=${startDate.toString()}&end_date=${endDate.toString()}`
@@ -195,9 +188,8 @@ export default function Matches() {
                     const d = new Date(match.created_on);
                     const day = dayjs(d.toLocaleString()).format("ddd, MMM D, YYYY");
                     return createData(match.id, day, match.results);
-                }))
-                setRowCount(res.data.count)
-                console.log("data", res.data)
+                }));
+                setRowCount(res.data.count);
             })
             .catch(e => console.log(e))
     }, [startDate, endDate, page])
@@ -275,11 +267,6 @@ export default function Matches() {
                         {rows.map((row) => (
                             <Row key={row.id} row={row}/>
                         ))}
-                        {emptyRows > 0 && (
-                            <TableRow style={{height: 53 * emptyRows}}>
-                                <TableCell colSpan={6}/>
-                            </TableRow>
-                        )}
                     </TableBody>
                     <TableFooter>
                         <TableRow>

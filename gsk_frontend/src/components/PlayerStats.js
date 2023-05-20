@@ -10,6 +10,24 @@ export default function PlayerStats() {
     const {playerId} = useParams()
     const [player, setPlayer] = useState({color: "#ffffff"})
 
+    const humanize = (score) => {
+      if (score < 1000) {
+          return score;
+      }
+      else if (score >= 1000 && score < 1000000) {
+          return `${Math.round(((score/1000) + Number.EPSILON) * 100) / 100} K`
+      }
+      else if (score >= 1000000 && score < 1000000000) {
+          return `${Math.round(((score/1000000) + Number.EPSILON) * 100) / 100} M`
+      }
+      else if (score >= 1000000000 && score < 1000000000000) {
+          return `${Math.round(((score/1000000000) + Number.EPSILON) * 100) / 100} B`
+      }
+      else {
+          return `${Math.round(((score/1000000000000) + Number.EPSILON) * 100) / 100} T`
+      }
+    };
+
     useEffect(() => {
         axios.get(`${BASE_API_URL}${GAME_ENDPOINT}${PLAYER_DETAIL_ENDPOINT}/${playerId}`)
             .then(res => {
