@@ -10,6 +10,7 @@ psycopg2-binary = "*"
 django-filter = "*"
 django-cors-headers = "*"
 factory_boy = "*"
+faker = "*"
 
 [dev-packages]
 
