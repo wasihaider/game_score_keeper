@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { Prompt } from 'react-router'
 import {Box, Button, Fab, Grid, IconButton, TextField, Typography} from "@mui/material";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
@@ -109,6 +110,9 @@ export default function MatchPlay({players, endGame}) {
 
     return (
         <>
+            <Prompt>
+
+            </Prompt>
             <Box sx={{flexGrow: 1, textAlign: 'right'}}>
                 <Fab sx={{mb: 2}} color="secondary" variant='extended' aria-label="add" onClick={handleEndGame}>
                     End Game
